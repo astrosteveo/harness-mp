@@ -108,7 +108,7 @@ Check that commands appear:
 - **Complexity reduction** - Simplicity as primary goal
 - **Evidence over claims** - Verify before declaring success
 
-Read more: [Harness for Claude Code](https://blog.fsck.com/2025/10/09/harness/)
+Read more: [Superpowers for Claude Code](https://blog.fsck.com/2025/10/09/superpowers/)
 
 ## Contributing
 
