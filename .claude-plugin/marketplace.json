@@ -18,13 +18,13 @@
     },
     {
       "name": "plugin-dev",
-      "description": "Comprehensive toolkit for developing Claude Code plugins, updated to support v2.1.0 features",
+      "description": "Installer for plugin-dev skills and agents. Run /plugin-dev:init to install to your project.",
       "author": {
         "name": "Steven Mosley",
         "email": "34114851+astrosteveo@users.noreply.github.com"
       },
       "license": "MIT",
-      "keywords": ["development", "plugins", "toolkit"],
+      "keywords": ["development", "plugins", "toolkit", "installer"],
       "source": "./plugins/plugin-dev",
       "category": "development",
       "homepage": "https://github.com/astrosteveo/harness-mp"
