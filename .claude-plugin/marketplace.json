@@ -7,7 +7,7 @@
   "plugins": [
     {
       "name": "harness",
-      "description": "Installer for harness skills and agents. Run /harness:init to install to your project.",
+      "description": "Skills and agents for feature development workflows",
       "author": {
         "name": "Steven Mosley",
         "email": "34114851+astrosteveo@users.noreply.github.com"
@@ -17,39 +17,15 @@
       "homepage": "https://github.com/astrosteveo/harness-mp"
     },
     {
-      "name": "harness-direct",
-      "description": "Skills and agents for feature development workflows - direct install (no init command needed)",
-      "author": {
-        "name": "Steven Mosley",
-        "email": "34114851+astrosteveo@users.noreply.github.com"
-      },
-      "source": "./plugins/harness-direct",
-      "category": "development",
-      "homepage": "https://github.com/astrosteveo/harness-mp"
-    },
-    {
       "name": "plugin-dev",
-      "description": "Installer for plugin-dev skills and agents. Run /plugin-dev:init to install to your project.",
+      "description": "Skills, agents, and commands for Claude Code plugin development",
       "author": {
         "name": "Steven Mosley",
         "email": "34114851+astrosteveo@users.noreply.github.com"
       },
       "license": "MIT",
-      "keywords": ["development", "plugins", "toolkit", "installer"],
+      "keywords": ["development", "plugins", "toolkit"],
       "source": "./plugins/plugin-dev",
-      "category": "development",
-      "homepage": "https://github.com/astrosteveo/harness-mp"
-    },
-    {
-      "name": "plugin-dev-direct",
-      "description": "Skills, agents, and commands for plugin development - direct install (no init command needed)",
-      "author": {
-        "name": "Steven Mosley",
-        "email": "34114851+astrosteveo@users.noreply.github.com"
-      },
-      "license": "MIT",
-      "keywords": ["development", "plugins", "toolkit", "direct"],
-      "source": "./plugins/plugin-dev-direct",
       "category": "development",
       "homepage": "https://github.com/astrosteveo/harness-mp"
     }
