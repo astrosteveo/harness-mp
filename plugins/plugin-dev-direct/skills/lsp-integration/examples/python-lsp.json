@@ -1,0 +1,20 @@
+{
+  "python": {
+    "command": "pyright-langserver",
+    "args": ["--stdio"],
+    "initializationOptions": {
+      "python": {
+        "analysis": {
+          "typeCheckingMode": "basic",
+          "autoSearchPaths": true,
+          "useLibraryCodeForTypes": true
+        }
+      }
+    },
+    "restartOnCrash": true,
+    "extensionToLanguage": {
+      ".py": "python",
+      ".pyi": "python"
+    }
+  }
+}

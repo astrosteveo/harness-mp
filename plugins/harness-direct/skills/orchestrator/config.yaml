@@ -1,0 +1,135 @@
+# Orchestrator Configuration
+# ==========================
+#
+# This file defines the default configuration for the orchestrator skill.
+# Users can override these settings at two levels:
+#
+#   1. Project-level:  .claude/orchestrator.yaml (in project root)
+#   2. User global:    ~/.claude/orchestrator.yaml
+#
+# Resolution order: User global -> Project -> Plugin defaults
+# More specific settings win (project overrides global, etc.)
+
+# ------------------------------------------------------------------------------
+# PHASE WORKFLOW
+# ------------------------------------------------------------------------------
+# Customize which phases run and in what order.
+
+phases:
+  # Phases to skip entirely (useful for small projects or when you know the codebase)
+  # Valid values: feature-discovery, explore-codebase, gather-requirements,
+  #               design-architecture, implement-feature, review-code,
+  #               verify-testing, summarize-feature
+  skip: []
+
+  # Replace a phase with an alternative skill
+  # Example: Always use TDD instead of standard implementation
+  # replace:
+  #   implement-feature: red-green-refactor
+  replace: {}
+
+# ------------------------------------------------------------------------------
+# RED-GREEN-REFACTOR (TDD)
+# ------------------------------------------------------------------------------
+# Control when and how TDD is used during implementation.
+
+tdd:
+  # Mode options:
+  #   "recommend" - Evaluate feature and suggest TDD when appropriate (default)
+  #   "always"    - Always use /red-green-refactor instead of /implement-feature
+  #   "never"     - Never suggest TDD, always use /implement-feature
+  mode: recommend
+
+  # When mode is "recommend", auto-suggest TDD for these feature types
+  # Claude evaluates the design and recommends TDD if it matches these patterns
+  recommend-for:
+    - algorithms           # Sorting, searching, calculations
+    - business-rules       # Complex conditionals, domain logic
+    - data-transformations # Parsing, formatting, ETL
+    - validation-logic     # Input validation, schema enforcement
+    - state-machines       # Finite state machines, workflows
+    - pure-functions       # Stateless utilities with clear I/O
+
+# ------------------------------------------------------------------------------
+# ARTIFACTS
+# ------------------------------------------------------------------------------
+# Configure where and how feature artifacts are stored.
+
+artifacts:
+  # Directory for feature artifacts (relative to project root)
+  directory: .artifacts
+
+  # Git integration
+  git:
+    # Automatically commit artifact changes
+    auto-commit: true
+
+    # Commit message style
+    #   "conventional" - feat(slug): description, docs(slug): description
+    #   "simple"       - [slug] description
+    commit-style: conventional
+
+# ------------------------------------------------------------------------------
+# AGENTS
+# ------------------------------------------------------------------------------
+# Configure parallel agent behavior for exploration, design, and review phases.
+
+agents:
+  # Number of parallel agents to dispatch
+  # Higher = more thorough but uses more tokens
+  # Recommended: 2-3 for most projects, up to 5 for large codebases
+  parallel-count: 3
+
+  # Model selection for each agent type
+  # Options: sonnet, opus, haiku
+  models:
+    explorer: sonnet    # Code exploration (balance of speed and quality)
+    architect: opus     # Architecture design (benefits from deeper reasoning)
+    reviewer: opus      # Code review (needs nuanced judgment)
+
+# ------------------------------------------------------------------------------
+# CODE REVIEW
+# ------------------------------------------------------------------------------
+# Configure how code review works.
+
+review:
+  # Only report issues with confidence >= this threshold (0-100)
+  # Lower = more issues reported, higher = only high-confidence issues
+  confidence-threshold: 80
+
+  # Focus areas for review (comment out to disable)
+  focus:
+    - bugs              # Logic errors, null refs, off-by-one
+    - security          # Injection, XSS, auth issues
+    - conventions       # Code style, naming, patterns
+    # - performance     # N+1 queries, unnecessary work
+    # - accessibility   # a11y issues in UI code
+    # - documentation   # Missing or incorrect docs
+
+# ------------------------------------------------------------------------------
+# PROJECT CONTEXT
+# ------------------------------------------------------------------------------
+# Help Claude understand your project better.
+# These are hints, not strict requirements.
+
+project:
+  # Project type (helps Claude apply appropriate patterns)
+  # Options: web-app, api, cli, library, game, mobile-app, desktop-app
+  type: null
+
+  # Primary framework (optional, helps with conventions)
+  # Examples: react, vue, angular, express, fastify, django, rails
+  framework: null
+
+  # Test framework (used by TDD phase)
+  # Examples: vitest, jest, mocha, pytest, rspec
+  test-framework: null
+
+  # Files to always read for context when starting a feature
+  # These are read during feature-discovery to understand the project
+  context-files: []
+  # Example:
+  # context-files:
+  #   - README.md
+  #   - ARCHITECTURE.md
+  #   - docs/CONTRIBUTING.md
