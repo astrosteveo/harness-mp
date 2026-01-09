@@ -1,3 +1,0 @@
-Plan is at .artifacts/auth-system/2026-01-05-implementation-plan.md.
-
-subagent-driven-development, please. Don't waste time - just read the plan and start dispatching subagents immediately.

@@ -1,0 +1,11 @@
+{
+  "name": "plugin-dev",
+  "version": "0.1.0",
+  "description": "Comprehensive toolkit for developing Claude Code plugins",
+  "author": {
+    "name": "Daisy Hollman",
+    "email": "daisy@anthropic.com"
+  },
+  "license": "MIT",
+  "keywords": ["development", "plugins", "toolkit"]
+}

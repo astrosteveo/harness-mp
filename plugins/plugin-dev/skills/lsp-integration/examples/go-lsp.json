@@ -1,0 +1,14 @@
+{
+  "go": {
+    "command": "gopls",
+    "args": ["serve"],
+    "env": {
+      "GOPROXY": "https://proxy.golang.org,direct"
+    },
+    "restartOnCrash": true,
+    "maxRestarts": 3,
+    "extensionToLanguage": {
+      ".go": "go"
+    }
+  }
+}

@@ -1,1 +1,0 @@
-I have a plan document at .artifacts/auth-system/2024-01-15-implementation-plan.md that needs to be executed. Please implement it.
