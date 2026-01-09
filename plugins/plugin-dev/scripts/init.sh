@@ -1,7 +1,8 @@
 #!/bin/bash
 set -e
 
-DEST="$CLAUDE_PROJECT_DIR/.claude"
+# Use CLAUDE_PROJECT_DIR if set, otherwise use current working directory
+DEST="${CLAUDE_PROJECT_DIR:-.}/.claude"
 
 mkdir -p "$DEST/skills" "$DEST/agents" "$DEST/commands"
 
@@ -18,4 +19,4 @@ echo ""
 echo "=== Installed Commands ==="
 ls -1 "$DEST/commands/"
 echo ""
-echo "plugin-dev installed to .claude/ - skills, agents, and commands are now available."
+echo "plugin-dev installed to $DEST - skills, agents, and commands are now available."
