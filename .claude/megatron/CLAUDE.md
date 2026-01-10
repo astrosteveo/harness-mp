@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code when working with code in this repository.
 
 ## Project Overview
 
@@ -10,19 +10,17 @@ Megatron is a semantic memory system for Claude Code. It indexes conversation tr
 
 ```bash
 # Setup (in project root)
-python -m venv .venv
-source .venv/bin/activate
-pip install -e .
+uv sync
 
 # Run MCP server (for Claude Code integration)
-python -m claude_memory.mcp_server
+uv run megatron-mcp
 
 # CLI commands (for manual use)
-claude-memory init                    # Initialize project memory
-claude-memory sync                    # Sync from latest transcript
-claude-memory project-search "query"  # Search project memory
-claude-memory resume                  # Get resume context
-claude-memory project-stats           # Show memory stats
+uv run megatron init                    # Initialize project memory
+uv run megatron sync                    # Sync from latest transcript
+uv run megatron project-search "query"  # Search project memory
+uv run megatron resume                  # Get resume context
+uv run megatron project-stats           # Show memory stats
 ```
 
 ## Architecture
@@ -63,28 +61,13 @@ Parser (parser.py) ──► Chunker (chunker.py)
 - Session state: `<project>/.megatron/state.json`
 - Transcripts found by encoding project path (e.g., `/home/user/project` → `-home-user-project`)
 
-## Installation
+## Docker
+
+Build and run:
 
 ```bash
-# Clone the repo
-git clone <repo-url> ~/workspace/claude-memory
-cd ~/workspace/claude-memory
-
-# Set up venv and install
-python -m venv .venv
-source .venv/bin/activate
-pip install -e .
+docker build -t megatron .
+docker run -i --rm -v $(pwd):/workspace -v ~/.claude:/root/.claude megatron
 ```
-
-This installs:
-- `claude-memory` - CLI tool
-- `megatron-mcp` - MCP server entry point
-
-## Claude Code Integration
-
-Install the plugins from harness-mp:
-
-1. **`megatron-mcp`** - Registers the MCP server (provides tools to Claude)
-2. **`megatron`** - Adds `/recall` and `/resume` skills
 
 The MCP server uses stdio JSON-RPC protocol (MCP 2024-11-05).

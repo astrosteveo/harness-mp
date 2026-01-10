@@ -4,13 +4,13 @@
 set -eo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PLUGIN_DIR="$(dirname "$SCRIPT_DIR")"
+PROJECT_DIR="$(dirname "$(dirname "$SCRIPT_DIR")")"
 
 input=$(cat)
 cwd=$(echo "$input" | jq -r '.cwd // empty')
-[[ -z "$cwd" ]] && cwd="$(pwd)"
+[[ -z "$cwd" ]] && cwd="$PROJECT_DIR"
 
-cd "$PLUGIN_DIR/megatron"
+cd "$PROJECT_DIR/.claude/megatron"
 uv run megatron sync --project "$cwd" >/dev/null 2>&1 || true
 
 exit 0

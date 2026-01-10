@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "megatron": {
+      "command": "uv",
+      "args": ["run", "--project", "/home/astrosteveo/workspace/harness-mp/.claude/megatron", "megatron-mcp"],
+      "env": {}
+    }
+  }
+}

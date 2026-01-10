@@ -1,5 +1,5 @@
 [project]
-name = "claude-memory"
+name = "megatron"
 version = "0.1.0"
 description = "Semantic memory for Claude Code sessions"
 requires-python = ">=3.10"
@@ -10,8 +10,8 @@ dependencies = [
 ]
 
 [project.scripts]
-claude-memory = "claude_memory.cli:main"
-megatron-mcp = "claude_memory.mcp_server:main"
+megatron = "megatron_mcp.cli:main"
+megatron-mcp = "megatron_mcp.mcp_server:main"
 
 [build-system]
 requires = ["setuptools>=61.0"]

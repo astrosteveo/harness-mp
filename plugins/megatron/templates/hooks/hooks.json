@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/bin/bash \"${CLAUDE_PLUGIN_ROOT}/hooks/auto-sync.sh\"",
+            "command": "/bin/bash .claude/hooks/auto-sync.sh",
             "timeout": 30
           }
         ]

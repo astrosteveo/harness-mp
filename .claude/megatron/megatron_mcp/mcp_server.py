@@ -1,7 +1,7 @@
 """
 Megatron MCP Server - Semantic memory for Claude Code.
 
-Run with: python -m claude_memory.mcp_server
+Run with: python -m megatron_mcp.mcp_server
 """
 
 import json
