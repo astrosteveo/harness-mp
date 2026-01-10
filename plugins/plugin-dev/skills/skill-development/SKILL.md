@@ -1,6 +1,6 @@
 ---
 name: skill-development
-description: This skill should be used when the user wants to "create a skill", "add a skill to plugin", "write a new skill", "improve skill description", "organize skill content", or needs guidance on skill structure, progressive disclosure, or skill development best practices for Claude Code plugins.
+description: This skill should be used when the user asks to "create a skill", "add a skill to plugin", "write a new skill", "improve skill description", "organize skill content", or needs guidance on skill structure, progressive disclosure, or skill development best practices for Claude Code plugins.
 ---
 
 # Skill Development for Claude Code Plugins
@@ -168,7 +168,7 @@ Also, delete any example files and directories not needed for the skill. Create 
 
 ```yaml
 ---
-name: Skill Name
+name: skill-name
 description: This skill should be used when the user asks to "specific phrase 1", "specific phrase 2", "specific phrase 3". Include exact phrases users would say that should trigger this skill. Be concrete and specific.
 ---
 ```
