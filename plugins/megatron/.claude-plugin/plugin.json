@@ -1,0 +1,7 @@
+{
+  "name": "megatron",
+  "version": "0.1.0",
+  "description": "Semantic memory for Claude Code - carry context across sessions with the Vectorized Super Megatron Max 5000",
+  "author": "astrosteveo",
+  "repository": "https://github.com/astrosteveo/claude-memory"
+}

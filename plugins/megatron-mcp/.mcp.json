@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "megatron": {
+      "command": "megatron-mcp",
+      "args": [],
+      "env": {}
+    }
+  }
+}

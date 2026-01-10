@@ -1,0 +1,7 @@
+{
+  "name": "megatron-mcp",
+  "version": "0.1.0",
+  "description": "MCP server for Megatron semantic memory. Requires claude-memory package to be installed.",
+  "author": "astrosteveo",
+  "repository": "https://github.com/astrosteveo/claude-memory"
+}
