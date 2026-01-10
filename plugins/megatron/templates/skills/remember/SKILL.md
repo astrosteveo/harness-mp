@@ -1,5 +1,5 @@
 ---
-name: remember
+name: megatron:remember
 description: Explicitly save something important to memory. Use when user says "remember this", "save this", "note this for later", or wants to explicitly store a decision, preference, or important context for future sessions.
 ---
 

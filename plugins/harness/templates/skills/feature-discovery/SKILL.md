@@ -1,5 +1,5 @@
 ---
-name: feature-discovery
+name: harness:feature-discovery
 description: Initializes a new feature development session. Creates artifact directory, documents initial understanding, and sets up progress tracking. Use when starting work on a new feature or capability.
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep, TodoWrite
 ---
@@ -70,5 +70,5 @@ Last Updated: {date}
 ## Next Steps
 
 After discovery is complete, guide the user to use:
-- `/explore-codebase` to understand relevant existing code
+- `/harness:explore-codebase` to understand relevant existing code
 - Or continue to clarifying questions if codebase is already understood

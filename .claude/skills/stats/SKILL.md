@@ -1,5 +1,5 @@
 ---
-name: stats
+name: megatron:stats
 description: Show memory statistics. Use when user asks "how much is indexed", "memory stats", "what's in memory", or wants to see the state of their Megatron memory index.
 ---
 

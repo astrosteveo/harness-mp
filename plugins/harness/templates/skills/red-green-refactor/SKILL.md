@@ -1,5 +1,5 @@
 ---
-name: red-green-refactor
+name: harness:red-green-refactor
 description: Implements features using test-driven development (red-green-refactor cycle). Use when the user wants to add testable functionality, mentions TDD, or asks to write tests first before implementation.
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep, TodoWrite, Skill
 context: fork

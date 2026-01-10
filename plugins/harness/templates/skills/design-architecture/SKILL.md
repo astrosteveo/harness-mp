@@ -1,5 +1,5 @@
 ---
-name: design-architecture
+name: harness:design-architecture
 description: Designs multiple implementation approaches with different trade-offs using parallel architect agents. Presents options and helps user select the best approach. Use after requirements are gathered.
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep, TodoWrite, Task
 context: fork
@@ -100,4 +100,4 @@ Multiple as phase progresses:
 ## Next Steps
 
 After architecture is designed, guide the user to use:
-- `/implement-feature` to build the feature
+- `/harness:implement-feature` to build the feature

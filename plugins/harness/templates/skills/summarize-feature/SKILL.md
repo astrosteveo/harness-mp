@@ -1,5 +1,5 @@
 ---
-name: summarize-feature
+name: harness:summarize-feature
 description: Documents completed feature with summary of what was built, key decisions, files changed, and lessons learned. Updates roadmap. Use after manual testing verification passes.
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep, TodoWrite
 context: fork

@@ -1,5 +1,5 @@
 ---
-name: recall
+name: megatron:recall
 description: Search semantic memory from past Claude Code sessions. Use when user asks "what do I remember about X", "recall conversations about Y", "search my memory for Z", or wants to find past context about a topic.
 ---
 

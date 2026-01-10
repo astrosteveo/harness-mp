@@ -1,5 +1,5 @@
 ---
-name: resume
+name: megatron:resume
 description: Resume work from where you left off. Use when user says "resume", "continue where we left off", "pick up where we left off", "what were we working on", or starts a new session and wants to continue previous work.
 ---
 

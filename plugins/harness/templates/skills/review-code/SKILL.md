@@ -1,5 +1,5 @@
 ---
-name: review-code
+name: harness:review-code
 description: Reviews implemented code for simplicity, DRY, elegance, bugs, and project conventions using parallel reviewer agents. Presents findings and helps prioritize fixes. Use after implementation is complete.
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep, TodoWrite, Task
 context: fork
@@ -94,4 +94,4 @@ Add a section:
 ## Next Steps
 
 After review is complete, guide the user to use:
-- `/verify-testing` to perform manual testing verification
+- `/harness:verify-testing` to perform manual testing verification

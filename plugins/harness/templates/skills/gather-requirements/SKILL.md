@@ -1,5 +1,5 @@
 ---
-name: gather-requirements
+name: harness:gather-requirements
 description: Systematically identifies and resolves ambiguities by asking clarifying questions one at a time. Creates comprehensive requirements document. Use after codebase exploration to fill in gaps before designing.
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep, TodoWrite
 context: fork
@@ -101,4 +101,4 @@ Multiple as phase progresses:
 ## Next Steps
 
 After requirements are gathered, guide the user to use:
-- `/design-architecture` to design implementation approaches
+- `/harness:design-architecture` to design implementation approaches

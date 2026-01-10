@@ -1,5 +1,5 @@
 ---
-name: orchestrator
+name: harness:orchestrator
 description: Guided feature development with codebase understanding and architecture focus. Orchestrates the full feature development workflow from discovery through summary.
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep, TodoWrite, Task, Skill
 ---
@@ -16,14 +16,14 @@ The feature development process consists of 8 phases, each with its own skill:
 
 | Phase | Skill | Purpose |
 |-------|-------|---------|
-| 1 | `/feature-discovery` | Initialize feature, understand requirements |
-| 2 | `/explore-codebase` | Deep dive into relevant existing code |
-| 3 | `/gather-requirements` | Ask clarifying questions, document requirements |
-| 4 | `/design-architecture` | Design and compare implementation approaches |
-| 5 | `/implement-feature` | Build the feature |
-| 6 | `/review-code` | Review for quality and correctness |
-| 7 | `/verify-testing` | Manual testing verification |
-| 8 | `/summarize-feature` | Document completion |
+| 1 | `/harness:feature-discovery` | Initialize feature, understand requirements |
+| 2 | `/harness:explore-codebase` | Deep dive into relevant existing code |
+| 3 | `/harness:gather-requirements` | Ask clarifying questions, document requirements |
+| 4 | `/harness:design-architecture` | Design and compare implementation approaches |
+| 5 | `/harness:implement-feature` | Build the feature |
+| 6 | `/harness:review-code` | Review for quality and correctness |
+| 7 | `/harness:verify-testing` | Manual testing verification |
+| 8 | `/harness:summarize-feature` | Document completion |
 
 ---
 
@@ -32,7 +32,7 @@ The feature development process consists of 8 phases, each with its own skill:
 **All progress is saved to `.artifacts/{feature-slug}/` and committed to Git.**
 
 ### Starting a New Feature
-When `$ARGUMENTS` contains a new feature request, invoke `/feature-discovery`.
+When `$ARGUMENTS` contains a new feature request, invoke `/harness:feature-discovery`.
 
 ### Resuming an Existing Feature
 When `.artifacts/{feature-slug}/` exists:
@@ -86,7 +86,7 @@ Feature request: $ARGUMENTS
 
 1. Check if `.artifacts/` contains a matching feature directory
    - If resuming: Read `progress.md`, determine current phase, invoke appropriate skill
-   - If new: Invoke `/feature-discovery` with the feature request
+   - If new: Invoke `/harness:feature-discovery` with the feature request
 
 2. After each phase completes, guide the user to the next skill in the workflow
 

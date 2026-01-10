@@ -1,5 +1,5 @@
 ---
-name: sync
+name: megatron:sync
 description: Sync the current session to memory. Use when user says "save to memory", "sync memory", "index this session", or wants to ensure the current conversation is saved to the Megatron index.
 ---
 

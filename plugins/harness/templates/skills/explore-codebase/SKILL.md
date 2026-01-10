@@ -1,5 +1,5 @@
 ---
-name: explore-codebase
+name: harness:explore-codebase
 description: Deep exploration of codebase to understand patterns, architecture, and relevant code for a feature. Launches parallel exploration agents and synthesizes findings. Use after feature discovery or when you need to understand how existing code works.
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep, TodoWrite, Task
 context: fork
@@ -75,4 +75,4 @@ Add a section:
 ## Next Steps
 
 After exploration is complete, guide the user to use:
-- `/gather-requirements` to clarify requirements and resolve ambiguities
+- `/harness:gather-requirements` to clarify requirements and resolve ambiguities
