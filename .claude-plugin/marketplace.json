@@ -18,7 +18,7 @@
     },
     {
       "name": "plugin-dev",
-      "description": "Skills, agents, and commands for Claude Code plugin development",
+      "description": "Skills and agents for Claude Code plugin development",
       "author": {
         "name": "Steven Mosley",
         "email": "34114851+astrosteveo@users.noreply.github.com"
