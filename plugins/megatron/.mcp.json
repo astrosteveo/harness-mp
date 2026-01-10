@@ -1,8 +1,8 @@
 {
   "mcpServers": {
-    "megatron": {
-      "command": "megatron-mcp",
-      "args": [],
+    "megatron-mcp": {
+      "command": "uv",
+      "args": ["run", "--project", "${CLAUDE_PLUGIN_ROOT}/claude-memory", "megatron-mcp"],
       "env": {}
     }
   }

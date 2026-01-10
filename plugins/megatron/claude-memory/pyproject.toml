@@ -1,0 +1,18 @@
+[project]
+name = "claude-memory"
+version = "0.1.0"
+description = "Semantic memory for Claude Code sessions"
+requires-python = ">=3.10"
+dependencies = [
+    "chromadb>=0.4.0",
+    "sentence-transformers>=2.2.0",
+    "click>=8.0.0",
+]
+
+[project.scripts]
+claude-memory = "claude_memory.cli:main"
+megatron-mcp = "claude_memory.mcp_server:main"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
