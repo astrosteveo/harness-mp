@@ -28,32 +28,6 @@
       "source": "./plugins/plugin-dev",
       "category": "development",
       "homepage": "https://github.com/astrosteveo/harness-mp"
-    },
-    {
-      "name": "harness-init",
-      "description": "Installer for harness skills and agents. Run /harness-init:init to install to your project.",
-      "author": {
-        "name": "Steven Mosley",
-        "email": "34114851+astrosteveo@users.noreply.github.com"
-      },
-      "license": "MIT",
-      "keywords": ["skills", "agents", "orchestration", "workflows", "installer"],
-      "source": "./plugins/harness-init",
-      "category": "development",
-      "homepage": "https://github.com/astrosteveo/harness-mp"
-    },
-    {
-      "name": "plugin-dev-init",
-      "description": "Installer for plugin-dev skills and agents. Run /plugin-dev-init:init to install to your project.",
-      "author": {
-        "name": "Steven Mosley",
-        "email": "34114851+astrosteveo@users.noreply.github.com"
-      },
-      "license": "MIT",
-      "keywords": ["development", "plugins", "toolkit", "installer"],
-      "source": "./plugins/plugin-dev-init",
-      "category": "development",
-      "homepage": "https://github.com/astrosteveo/harness-mp"
     }
   ]
 }
