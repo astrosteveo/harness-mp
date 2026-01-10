@@ -19,13 +19,15 @@ And everything is there - what you were working on, your todos, your progress.
 
 ## Prerequisites
 
-1. Install the `megatron-mcp` plugin (registers the MCP server)
-2. Install the `claude-memory` package:
-   ```bash
-   pip install claude-memory
-   # or from source
-   pip install -e ~/workspace/claude-memory
-   ```
+Install the `claude-memory` package:
+
+```bash
+pip install claude-memory
+# or from source
+pip install -e ~/workspace/claude-memory
+```
+
+This plugin auto-registers the MCP server when installed.
 
 ## How It Works
 
