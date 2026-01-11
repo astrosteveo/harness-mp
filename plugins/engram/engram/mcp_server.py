@@ -6,6 +6,7 @@ Run with: python -m engram.mcp_server
 
 import json
 import sys
+from collections import OrderedDict
 from pathlib import Path
 from datetime import datetime
 from typing import Any
@@ -16,14 +17,27 @@ from .project_memory import ProjectMemory, SessionState, find_project_transcript
 class EngramMCPServer:
     """MCP Server providing semantic memory tools."""
 
+    MAX_CACHED_PROJECTS = 5
+
     def __init__(self):
-        self.memories: dict[str, ProjectMemory] = {}
+        self.memories: OrderedDict[str, ProjectMemory] = OrderedDict()
 
     def get_memory(self, project_path: str) -> ProjectMemory:
-        """Get or create memory for a project."""
-        if project_path not in self.memories:
-            self.memories[project_path] = ProjectMemory(Path(project_path))
-        return self.memories[project_path]
+        """Get or create memory for a project (LRU cached)."""
+        if project_path in self.memories:
+            # Move to end (most recently used)
+            self.memories.move_to_end(project_path)
+            return self.memories[project_path]
+
+        # Create new instance
+        memory = ProjectMemory(Path(project_path))
+        self.memories[project_path] = memory
+
+        # Evict oldest if over limit
+        while len(self.memories) > self.MAX_CACHED_PROJECTS:
+            self.memories.popitem(last=False)  # Remove oldest (first)
+
+        return memory
 
     def handle_request(self, request: dict) -> dict:
         """Handle an MCP request."""
