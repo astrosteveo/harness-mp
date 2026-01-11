@@ -7,27 +7,23 @@
   "plugins": [
     {
       "name": "harness",
-      "description": "Feature development workflow and plugin creation skills",
-      "author": {
-        "name": "Steven Mosley",
-        "email": "34114851+astrosteveo@users.noreply.github.com"
+      "source": {
+        "source": "url",
+        "url": "https://github.com/astrosteveo/harness.git"
       },
       "license": "MIT",
       "keywords": ["workflow", "feature-development", "plugins", "skills", "orchestration"],
-      "source": "~/workspace/harness",
       "category": "development",
       "homepage": "https://github.com/astrosteveo/harness"
     },
     {
       "name": "engram",
-      "description": "Semantic memory for Claude Code - persistent context across sessions",
-      "author": {
-        "name": "Steven Mosley",
-        "email": "34114851+astrosteveo@users.noreply.github.com"
+      "source": {
+        "source": "url",
+        "url": "https://github.com/astrosteveo/engram.git"
       },
       "license": "MIT",
       "keywords": ["memory", "context", "persistence", "semantic-search"],
-      "source": "~/workspace/engram",
       "category": "productivity",
       "homepage": "https://github.com/astrosteveo/engram"
     }
