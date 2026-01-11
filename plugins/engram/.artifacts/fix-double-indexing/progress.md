@@ -1,7 +1,7 @@
 # Fix Double Indexing - Progress
 
 ## Status
-Phase: 3 - Requirements Gathering (Complete)
+Phase: 4 - Architecture Design (Complete)
 Started: 2026-01-11
 Last Updated: 2026-01-11
 
@@ -9,7 +9,7 @@ Last Updated: 2026-01-11
 - [x] Phase 1: Discovery
 - [x] Phase 2: Codebase Exploration
 - [x] Phase 3: Clarifying Questions
-- [ ] Phase 4: Architecture Design
+- [x] Phase 4: Architecture Design
 - [ ] Phase 5: Implementation
 - [ ] Phase 6: Quality Review
 - [ ] Phase 7: Manual Testing Verification
@@ -165,3 +165,12 @@ This causes:
   - R4: Provide `engram cleanup` command for migration
   - R5: Add optional debug logging for troubleshooting
 - Documented requirements in requirements.md
+
+### Session 4 - 2026-01-11
+- Designed three architecture approaches:
+  - A: Minimal (1 line change, no cleanup)
+  - B: Full (all requirements, new module, logging)
+  - C: Pragmatic (ID fix + cleanup command, ~45 lines)
+- Selected Approach C as right-sized solution for bug fix
+- Documented design in design.md
+- Deferred: debug logging, partial cleanup, marker file sharing
