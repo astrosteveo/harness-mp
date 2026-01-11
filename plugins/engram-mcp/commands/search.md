@@ -1,7 +1,7 @@
 ---
 description: Search project semantic memory for relevant past context
 argument-hint: <query>
-allowed-tools: ["engram:memory_search"]
+allowed-tools: mcp__engram__memory_search
 ---
 
 Search indexed memory for: $ARGUMENTS

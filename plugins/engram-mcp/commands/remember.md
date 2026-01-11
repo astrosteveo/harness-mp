@@ -1,7 +1,7 @@
 ---
 description: Save something important for future sessions
 argument-hint: <content>
-allowed-tools: ["engram:memory_remember"]
+allowed-tools: mcp__engram__memory_remember
 ---
 
 Remember this for future sessions: $ARGUMENTS
