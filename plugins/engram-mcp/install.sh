@@ -1,5 +1,5 @@
 #!/bin/bash
-# Install engram plugin files into a target project
+# Install engram-mcp plugin to a target project
 #
 # Usage: ./install.sh [target_directory]
 #        ./install.sh              # installs to current directory
@@ -11,38 +11,34 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TARGET_DIR="${1:-.}"
 TARGET_DIR="$(cd "$TARGET_DIR" && pwd)"
 
-echo "Installing engram to: $TARGET_DIR"
+echo "Installing engram-mcp to: $TARGET_DIR"
 
-# Create .claude directories
+# Create directories
 mkdir -p "$TARGET_DIR/.claude/commands/engram"
 mkdir -p "$TARGET_DIR/.claude/skills/engram"
+mkdir -p "$TARGET_DIR/.claude/hooks"
 
-# Copy commands (namespaced by directory)
+# Copy commands
 echo "  Copying commands..."
 cp "$SCRIPT_DIR/commands/"*.md "$TARGET_DIR/.claude/commands/engram/"
 
-# Copy skill definition
+# Copy skill
 echo "  Copying skill..."
-cp "$SCRIPT_DIR/.claude/skills/engram/SKILL.md" "$TARGET_DIR/.claude/skills/engram/"
+cp "$SCRIPT_DIR/skills/using-engram/SKILL.md" "$TARGET_DIR/.claude/skills/engram/"
+
+# Copy hooks
+echo "  Copying hooks..."
+cp "$SCRIPT_DIR/hooks/hooks.json" "$TARGET_DIR/.claude/hooks/engram-hooks.json"
+mkdir -p "$TARGET_DIR/.claude/scripts"
+cp "$SCRIPT_DIR/scripts/live-index.sh" "$TARGET_DIR/.claude/scripts/"
 
 # Set up MCP config
 MCP_FILE="$TARGET_DIR/.mcp.json"
-MCP_CONFIG='{
-  "mcpServers": {
-    "engram": {
-      "command": "uvx",
-      "args": ["--from", "git+https://github.com/astrosteveo/engram", "engram-mcp"]
-    }
-  }
-}'
-
 if [ -f "$MCP_FILE" ]; then
-    # Check if engram already configured
     if grep -q '"engram"' "$MCP_FILE" 2>/dev/null; then
-        echo "  MCP: engram already configured in .mcp.json"
+        echo "  MCP: engram already configured"
     else
-        # Merge with existing config using Python
-        echo "  MCP: Adding engram to existing .mcp.json"
+        echo "  MCP: Adding engram to .mcp.json"
         python3 -c "
 import json
 with open('$MCP_FILE') as f:
@@ -58,28 +54,26 @@ with open('$MCP_FILE', 'w') as f:
     fi
 else
     echo "  MCP: Creating .mcp.json"
-    echo "$MCP_CONFIG" > "$MCP_FILE"
+    cat > "$MCP_FILE" << 'EOF'
+{
+  "mcpServers": {
+    "engram": {
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/astrosteveo/engram", "engram-mcp"]
+    }
+  }
+}
+EOF
 fi
 
-# Create .engram directory
-mkdir -p "$TARGET_DIR/.engram"
-echo "  Created .engram/ directory"
-
-# Add to .gitignore if it exists
+# Add .engram/ to .gitignore
 GITIGNORE="$TARGET_DIR/.gitignore"
 if [ -f "$GITIGNORE" ]; then
     if ! grep -q "^\.engram/" "$GITIGNORE" 2>/dev/null; then
-        echo "" >> "$GITIGNORE"
-        echo "# Engram memory" >> "$GITIGNORE"
-        echo ".engram/" >> "$GITIGNORE"
+        echo -e "\n# Engram memory\n.engram/" >> "$GITIGNORE"
         echo "  Added .engram/ to .gitignore"
     fi
 fi
 
 echo ""
-echo "Done! Installed:"
-echo "  - Commands: /engram/remember, /engram/resume, /engram/search, /engram/stats, /engram/sync"
-echo "  - Skill: engram"
-echo "  - MCP server: engram"
-echo ""
-echo "Restart Claude Code to enable."
+echo "Done! Restart Claude Code to enable engram."

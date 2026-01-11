@@ -1,5 +1,5 @@
 #!/bin/bash
-# Uninstall engram plugin files from a target project
+# Uninstall engram-mcp plugin from a target project
 #
 # Usage: ./uninstall.sh [target_directory]
 #        ./uninstall.sh              # uninstalls from current directory
@@ -10,20 +10,33 @@ set -e
 TARGET_DIR="${1:-.}"
 TARGET_DIR="$(cd "$TARGET_DIR" && pwd)"
 
-echo "Uninstalling engram from: $TARGET_DIR"
+echo "Uninstalling engram-mcp from: $TARGET_DIR"
 
-# Remove commands directory
+# Remove commands
 CMD_DIR="$TARGET_DIR/.claude/commands/engram"
 if [ -d "$CMD_DIR" ]; then
     rm -rf "$CMD_DIR"
     echo "  Removed: .claude/commands/engram/"
 fi
 
-# Remove skill directory
+# Remove skill
 SKILL_DIR="$TARGET_DIR/.claude/skills/engram"
 if [ -d "$SKILL_DIR" ]; then
     rm -rf "$SKILL_DIR"
     echo "  Removed: .claude/skills/engram/"
+fi
+
+# Remove hooks
+HOOKS_FILE="$TARGET_DIR/.claude/hooks/engram-hooks.json"
+if [ -f "$HOOKS_FILE" ]; then
+    rm -f "$HOOKS_FILE"
+    echo "  Removed: .claude/hooks/engram-hooks.json"
+fi
+
+SCRIPT_FILE="$TARGET_DIR/.claude/scripts/live-index.sh"
+if [ -f "$SCRIPT_FILE" ]; then
+    rm -f "$SCRIPT_FILE"
+    echo "  Removed: .claude/scripts/live-index.sh"
 fi
 
 # Remove from MCP config
