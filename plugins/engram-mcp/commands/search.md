@@ -6,4 +6,4 @@ allowed-tools: mcp__engram__memory_search
 
 Search indexed memory for: $ARGUMENTS
 
-Use the `memory_search` MCP tool with the query provided.
+Use the `mcp__engram__memory_search` MCP tool with the query provided.
