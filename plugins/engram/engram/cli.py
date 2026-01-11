@@ -151,6 +151,24 @@ def sync(project: Path | None):
 
 
 @main.command()
+@click.option("--project", "-p", type=click.Path(exists=True, path_type=Path))
+def cleanup(project: Path | None):
+    """Remove duplicate chunks from old ID format.
+
+    This cleans up duplicates created when content was indexed by both
+    the live indexer and batch sync with different ID formats.
+    """
+    project = project or Path.cwd()
+    memory = ProjectMemory(project)
+
+    stats = memory.cleanup_duplicates()
+    click.echo(f"Cleanup complete:")
+    click.echo(f"  Scanned: {stats['scanned']} chunks")
+    click.echo(f"  Removed: {stats['removed']} duplicates")
+    click.echo(f"  Kept: {stats['kept']} chunks")
+
+
+@main.command()
 @click.argument("content")
 @click.option("--tags", "-t", multiple=True, help="Tags for categorization")
 @click.option("--project", "-p", type=click.Path(exists=True, path_type=Path))

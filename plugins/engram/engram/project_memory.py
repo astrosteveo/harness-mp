@@ -181,6 +181,68 @@ class ProjectMemory:
             "memory_path": str(self.memory_path),
         }
 
+    def cleanup_duplicates(self) -> dict:
+        """Remove duplicate chunks from old ID format.
+
+        The old format was: {session_id}:{uuid}
+        The new format is: {session_id}:exchange:{uuid} or {session_id}:partial:{uuid}
+
+        This method finds chunks with the old format that have a corresponding
+        new format chunk and removes them.
+
+        Returns:
+            dict with counts: {removed: int, kept: int, scanned: int}
+        """
+        # Get all document IDs
+        all_data = self.collection.get(include=[])
+        all_ids = all_data.get("ids", [])
+
+        if not all_ids:
+            return {"removed": 0, "kept": 0, "scanned": 0}
+
+        # Group IDs by their base form (without exchange:/partial: prefix)
+        # Base form: {session_id}:{uuid}
+        id_groups: dict[str, list[str]] = {}
+
+        for chunk_id in all_ids:
+            # Extract base ID by removing 'exchange:' or 'partial:' if present
+            parts = chunk_id.split(":")
+            if len(parts) >= 3 and parts[-2] in ("exchange", "partial"):
+                # New format: {session}:exchange:{uuid} or {session}:partial:{uuid}
+                base_id = f"{parts[0]}:{parts[-1]}"
+            else:
+                # Old format or other: use as-is for base
+                base_id = chunk_id
+
+            id_groups.setdefault(base_id, []).append(chunk_id)
+
+        # Find duplicates: groups with both old and new format
+        ids_to_remove = []
+        for base_id, chunk_ids in id_groups.items():
+            if len(chunk_ids) <= 1:
+                continue
+
+            # Check if we have both old format (base_id itself) and new format
+            has_old = base_id in chunk_ids
+            has_new = any(
+                cid for cid in chunk_ids
+                if cid != base_id and (":exchange:" in cid or ":partial:" in cid)
+            )
+
+            if has_old and has_new:
+                # Remove the old format ID
+                ids_to_remove.append(base_id)
+
+        # Delete duplicates
+        if ids_to_remove:
+            self.collection.delete(ids=ids_to_remove)
+
+        return {
+            "removed": len(ids_to_remove),
+            "kept": len(all_ids) - len(ids_to_remove),
+            "scanned": len(all_ids),
+        }
+
 
 def get_project_memory(cwd: Optional[Path] = None) -> ProjectMemory:
     """Get or create project memory for the current/specified directory."""

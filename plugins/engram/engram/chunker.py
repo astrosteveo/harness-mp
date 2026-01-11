@@ -93,7 +93,7 @@ def _create_chunk(messages: list[Message]) -> Chunk:
     last_msg = messages[-1]
 
     return Chunk(
-        id=f"{first_msg.session_id}:{first_msg.uuid}",
+        id=f"{first_msg.session_id}:exchange:{first_msg.uuid}",
         content="\n\n".join(content_parts),
         session_id=first_msg.session_id,
         timestamp=first_msg.timestamp,
