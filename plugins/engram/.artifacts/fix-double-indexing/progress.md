@@ -1,14 +1,14 @@
 # Fix Double Indexing - Progress
 
 ## Status
-Phase: 2 - Codebase Exploration (Complete)
+Phase: 3 - Requirements Gathering (Complete)
 Started: 2026-01-11
 Last Updated: 2026-01-11
 
 ## Current State
 - [x] Phase 1: Discovery
 - [x] Phase 2: Codebase Exploration
-- [ ] Phase 3: Clarifying Questions
+- [x] Phase 3: Clarifying Questions
 - [ ] Phase 4: Architecture Design
 - [ ] Phase 5: Implementation
 - [ ] Phase 6: Quality Review
@@ -155,3 +155,13 @@ This causes:
 - Documented ID format mismatch as primary cause of double indexing
 - Mapped all relevant files and integration points
 - Created architecture diagram showing the dual indexing paths
+
+### Session 3 - 2026-01-11
+- Gathered requirements through clarifying questions
+- Decisions made:
+  - R1: Use live indexer ID format as canonical (`{session}:exchange:{uuid}`)
+  - R2: Skip already-indexed content using shared marker files
+  - R3: Delete partial chunks when exchange completes
+  - R4: Provide `engram cleanup` command for migration
+  - R5: Add optional debug logging for troubleshooting
+- Documented requirements in requirements.md
