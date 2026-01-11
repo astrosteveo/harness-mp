@@ -1,6 +1,5 @@
 {
   "name": "engram",
-  "version": "1.0.0",
   "description": "Semantic memory for Claude Code - persistent context across sessions",
   "author": {
     "name": "Steven Mosley",
