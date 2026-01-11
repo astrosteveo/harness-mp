@@ -6,8 +6,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "engram-live-index",
-            "timeout": 5000
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/live-index.sh",
+            "timeout": 10000
           }
         ]
       }

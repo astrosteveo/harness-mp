@@ -1,6 +1,6 @@
 ---
-name: engram:memory
-description: Semantic memory for Claude Code - persistent context across sessions
+name: using-engram
+description: Use when using the engram MCP server
 ---
 
 # Engram - Semantic Memory
