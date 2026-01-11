@@ -1,7 +1,7 @@
 # Fix Double Indexing - Progress
 
 ## Status
-Phase: 4 - Architecture Design (Complete)
+Phase: 5 - Implementation (Complete)
 Started: 2026-01-11
 Last Updated: 2026-01-11
 
@@ -10,7 +10,7 @@ Last Updated: 2026-01-11
 - [x] Phase 2: Codebase Exploration
 - [x] Phase 3: Clarifying Questions
 - [x] Phase 4: Architecture Design
-- [ ] Phase 5: Implementation
+- [x] Phase 5: Implementation
 - [ ] Phase 6: Quality Review
 - [ ] Phase 7: Manual Testing Verification
 - [ ] Phase 8: Summary
@@ -174,3 +174,15 @@ This causes:
 - Selected Approach C as right-sized solution for bug fix
 - Documented design in design.md
 - Deferred: debug logging, partial cleanup, marker file sharing
+
+### Session 5 - 2026-01-11
+- Implemented all changes:
+  - chunker.py: Updated ID format to `{session}:exchange:{uuid}`
+  - project_memory.py: Added `cleanup_duplicates()` method (~60 lines)
+  - cli.py: Added `engram cleanup` command (~17 lines)
+- Tested implementation:
+  - Verified new chunk ID format: `sess-1:exchange:test-123`
+  - Verified CLI shows cleanup command
+  - Verified cleanup logic correctly removes old format duplicates
+  - Verified cleanup keeps new format chunks
+- Committed: feat(fix-double-indexing): unify ID format and add cleanup command
