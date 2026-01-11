@@ -11,6 +11,5 @@
   "repository": "https://github.com/astrosteveo/engram",
   "license": "MIT",
   "keywords": ["memory", "context", "persistence", "semantic-search", "mcp"],
-  "mcpServers": "./.mcp.json",
-  "hooks": "./hooks.json"
+  "mcpServers": "./.mcp.json"
 }
