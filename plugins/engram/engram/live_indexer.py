@@ -5,9 +5,11 @@ import sys
 from pathlib import Path
 from dataclasses import dataclass
 from typing import Optional
+from datetime import datetime
 
 from .project_memory import ProjectMemory, SessionState
 from .chunker import Chunk
+from .parser import parse_transcript
 
 
 @dataclass
@@ -36,69 +38,157 @@ def parse_hook_input(input_json: str) -> HookInput:
     )
 
 
-def extract_indexable_content(hook_input: HookInput) -> Optional[Chunk]:
+def get_index_marker_path(memory_path: Path, session_id: str) -> Path:
+    """Get the path to the marker file tracking indexed line count."""
+    return memory_path / f".indexed_{session_id}"
+
+
+def get_last_indexed_line(memory_path: Path, session_id: str) -> int:
+    """Get the last indexed line number for this session."""
+    marker = get_index_marker_path(memory_path, session_id)
+    if marker.exists():
+        try:
+            return int(marker.read_text().strip())
+        except (ValueError, IOError):
+            pass
+    return 0
+
+
+def save_indexed_line(memory_path: Path, session_id: str, line_num: int) -> None:
+    """Save the last indexed line number."""
+    marker = get_index_marker_path(memory_path, session_id)
+    marker.write_text(str(line_num))
+
+
+def index_new_messages(hook_input: HookInput, memory: ProjectMemory) -> int:
     """
-    Extract content worth indexing from a hook event.
+    Index new messages from the transcript since last run.
 
-    We index after significant tool uses:
-    - After assistant responses (captures exchanges)
-    - After file edits (captures what changed)
-    - After bash commands (captures what was run)
+    Returns the number of chunks indexed.
     """
-    if not hook_input.tool_name:
-        return None
+    if not hook_input.transcript_path or not hook_input.transcript_path.exists():
+        return 0
 
-    # Build content from the tool interaction
-    content_parts = []
+    # Get current position
+    last_line = get_last_indexed_line(memory.memory_path, hook_input.session_id)
 
-    if hook_input.tool_name in ("Edit", "Write", "MultiEdit"):
-        # File operations - index what was changed
-        if hook_input.tool_input:
-            file_path = hook_input.tool_input.get("file_path", "")
-            content_parts.append(f"[Edited file: {file_path}]")
-            if hook_input.tool_input.get("new_string"):
-                content_parts.append(f"New content: {hook_input.tool_input['new_string'][:500]}")
+    # Read and parse new messages
+    messages = []
+    current_line = 0
 
-    elif hook_input.tool_name == "Bash":
-        # Bash commands - index the command and output
-        if hook_input.tool_input:
-            cmd = hook_input.tool_input.get("command", "")
-            content_parts.append(f"[Command: {cmd}]")
-        if hook_input.tool_output:
-            output = hook_input.tool_output[:500]
-            content_parts.append(f"Output: {output}")
+    with open(hook_input.transcript_path, "r") as f:
+        for line in f:
+            current_line += 1
+            if current_line <= last_line:
+                continue
 
-    elif hook_input.tool_name == "TodoWrite":
-        # Todo updates - index the todo state
-        if hook_input.tool_input:
-            todos = hook_input.tool_input.get("todos", [])
-            content_parts.append("[Todo Update]")
-            for todo in todos:
-                status = todo.get("status", "pending")
-                content = todo.get("content", "")
-                content_parts.append(f"  [{status}] {content}")
+            line = line.strip()
+            if not line:
+                continue
 
-    elif hook_input.tool_name == "Read":
-        # File reads - light indexing of what was examined
-        if hook_input.tool_input:
-            file_path = hook_input.tool_input.get("file_path", "")
-            content_parts.append(f"[Read file: {file_path}]")
+            try:
+                data = json.loads(line)
+            except json.JSONDecodeError:
+                continue
 
-    if not content_parts:
-        return None
+            # Only index user and assistant messages
+            msg_type = data.get("type")
+            if msg_type not in ("user", "assistant"):
+                continue
 
-    content = "\n".join(content_parts)
+            # Skip meta messages
+            if data.get("isMeta"):
+                continue
 
-    return Chunk(
-        id=f"{hook_input.session_id}:{hook_input.tool_name}:{hash(content) % 10000}",
-        content=content,
-        session_id=hook_input.session_id,
-        timestamp=str(Path(hook_input.transcript_path).stat().st_mtime) if hook_input.transcript_path else "",
-        metadata={
-            "tool": hook_input.tool_name,
-            "type": "tool_use",
-        }
-    )
+            message_data = data.get("message", {})
+            content = message_data.get("content", "")
+
+            # Extract text content
+            if isinstance(content, list):
+                text_parts = []
+                for block in content:
+                    if isinstance(block, dict):
+                        if block.get("type") == "text":
+                            text_parts.append(block.get("text", ""))
+                content = "\n".join(text_parts)
+
+            if not content or not content.strip():
+                continue
+
+            # Skip command-related content
+            if content.startswith("<command-name>") or content.startswith("<local-command"):
+                continue
+
+            role = message_data.get("role", msg_type)
+            uuid = data.get("uuid", "")
+            timestamp = data.get("timestamp", "")
+
+            messages.append({
+                "role": role,
+                "content": content,
+                "uuid": uuid,
+                "timestamp": timestamp,
+            })
+
+    # Chunk messages by exchange (user + assistant pairs)
+    chunks_indexed = 0
+    exchange = []
+
+    for msg in messages:
+        exchange.append(msg)
+
+        # When we have a complete exchange, index it
+        if msg["role"] == "assistant" and len(exchange) >= 1:
+            content_parts = []
+            for m in exchange:
+                prefix = "User: " if m["role"] == "user" else "Assistant: "
+                # Truncate very long messages
+                msg_content = m["content"][:2000] if len(m["content"]) > 2000 else m["content"]
+                content_parts.append(f"{prefix}{msg_content}")
+
+            chunk_content = "\n\n".join(content_parts)
+
+            # Create and index chunk
+            chunk = Chunk(
+                id=f"{hook_input.session_id}:exchange:{exchange[0]['uuid']}",
+                content=chunk_content,
+                session_id=hook_input.session_id,
+                timestamp=exchange[0].get("timestamp", ""),
+                metadata={
+                    "type": "exchange",
+                    "message_count": len(exchange),
+                }
+            )
+            memory.index_chunk(chunk)
+            chunks_indexed += 1
+            exchange = []
+
+    # Index any remaining messages (incomplete exchange)
+    if exchange:
+        content_parts = []
+        for m in exchange:
+            prefix = "User: " if m["role"] == "user" else "Assistant: "
+            msg_content = m["content"][:2000] if len(m["content"]) > 2000 else m["content"]
+            content_parts.append(f"{prefix}{msg_content}")
+
+        chunk = Chunk(
+            id=f"{hook_input.session_id}:partial:{exchange[0]['uuid']}",
+            content="\n\n".join(content_parts),
+            session_id=hook_input.session_id,
+            timestamp=exchange[0].get("timestamp", ""),
+            metadata={
+                "type": "partial_exchange",
+                "message_count": len(exchange),
+            }
+        )
+        memory.index_chunk(chunk)
+        chunks_indexed += 1
+
+    # Save progress
+    if current_line > last_line:
+        save_indexed_line(memory.memory_path, hook_input.session_id, current_line)
+
+    return chunks_indexed
 
 
 def capture_session_state(hook_input: HookInput, memory: ProjectMemory) -> SessionState:
@@ -134,16 +224,15 @@ def capture_session_state(hook_input: HookInput, memory: ProjectMemory) -> Sessi
             except:
                 pass
 
-    from datetime import datetime
     return SessionState(
         session_id=hook_input.session_id,
         timestamp=datetime.now().isoformat(),
         cwd=str(hook_input.cwd),
-        last_exchanges=[],  # Could populate from recent memory query
+        last_exchanges=[],
         active_todos=todos,
         plan_files=plan_files,
         in_progress=in_progress,
-        last_error=None,  # Could extract from recent errors
+        last_error=None,
     )
 
 
@@ -164,10 +253,8 @@ def run_live_indexer():
     # Get project memory
     memory = ProjectMemory(hook_input.cwd)
 
-    # Extract and index content
-    chunk = extract_indexable_content(hook_input)
-    if chunk:
-        memory.index_chunk(chunk)
+    # Index new conversation messages from transcript
+    index_new_messages(hook_input, memory)
 
     # Capture state on significant events
     if hook_input.tool_name == "TodoWrite":
