@@ -2,108 +2,136 @@
 
 Feature development workflows and plugin creation skills for Claude Code.
 
-Harness bootstraps your project with skills and agents that live in `.claude/`, checked into version control, and evolve with your project.
-
 ## Installation
 
-### Via Claude Command (recommended)
-
-If harness is installed as a plugin:
-
-```
-/harness:init            # First install - skip existing
-/harness:init --update   # Smart update - preserve customizations
-/harness:init --force    # Overwrite everything
+```bash
+claude plugin add harness@astrosteveo-marketplace
 ```
 
-### Via Script
-
-Run the init script directly:
+## Quick Start
 
 ```bash
-/path/to/harness/scripts/init.sh                    # First install
-/path/to/harness/scripts/init.sh --update           # Smart update
-/path/to/harness/scripts/init.sh --force            # Overwrite all
-/path/to/harness/scripts/init.sh /path/to/project   # Specify target
+/harness:feature "add user authentication"
 ```
 
-### How `--update` Works
+That's it. The command orchestrates the entire workflow, pausing only when your input is needed.
 
-- Tracks installed file checksums in `.claude/.harness-manifest`
-- Files you haven't modified -> updated to latest
-- Files you've customized -> preserved (listed in output)
+## Feature Development
 
-## What Gets Installed
+### The `/harness:feature` Command
 
-Skills and agents are copied to your project's `.claude/` directory:
+One command drives the entire development lifecycle:
 
-```
-your-project/
-└── .claude/
-    ├── skills/           # 21 development skills
-    ├── agents/           # 6 specialized agents
-    └── .harness-manifest # Tracks installed versions
+```bash
+/harness:feature <description>        # Start new feature
+/harness:feature                      # Resume from artifacts
+/harness:feature --phase design       # Jump to specific phase
+/harness:feature --tdd                # Use test-driven development
+/harness:feature --skip review        # Skip a phase
 ```
 
-## Feature Development Workflow
+### Workflow Phases
 
-Guided workflow for building features from discovery to completion:
+| Phase | What Happens |
+|-------|--------------|
+| **Discovery** | Initialize tracking, understand the request |
+| **Explore** | Deep codebase analysis via parallel `code-explorer` agents |
+| **Requirements** | Clarify ambiguities one question at a time |
+| **Design** | Multiple approaches via parallel `code-architect` agents |
+| **Implement** | Build following approved design (or TDD if `--tdd`) |
+| **Review** | Quality review via parallel `code-reviewer` agents |
+| **Testing** | Manual testing verification |
+| **Summary** | Document decisions and lessons learned |
+
+### Pause Points
+
+The workflow runs autonomously, stopping only when your input is needed:
+
+- **Requirements** - answering clarifying questions
+- **Design** - selecting an architecture approach
+- **Implementation** - approving the plan before coding
+- **Testing** - confirming tests pass
+
+### Artifacts
+
+Progress is tracked in `.artifacts/<feature-slug>/`:
+
+```
+.artifacts/user-auth/
+├── progress.md      # Current phase, session log
+├── requirements.md  # Clarifications and requirements
+├── design.md        # Chosen approach and rationale
+├── plan.md          # Implementation steps
+└── summary.md       # Final documentation
+```
+
+### Memory Integration
+
+If you have `engram-mcp` installed, `/harness:feature` automatically:
+
+- **Searches** past sessions for relevant context at start
+- **Remembers** key decisions and lessons at completion
+- **Syncs** the session for future recall
+
+## Configuration
+
+Create `.claude/harness.yaml` for project-specific settings:
+
+```yaml
+phases:
+  skip: []  # discovery, explore, requirements, design, implement, review, testing, summary
+
+tdd:
+  mode: recommend  # recommend | always | never
+
+agents:
+  parallel-count: 3
+  models:
+    explorer: sonnet
+    architect: opus
+    reviewer: opus
+
+artifacts:
+  directory: .artifacts
+  git:
+    auto-commit: true
+    commit-style: conventional
+```
+
+User-level config at `~/.claude/harness.yaml` applies to all projects.
+
+## Agents
+
+Specialized agents launched by `/harness:feature`:
+
+| Agent | Phase | Purpose |
+|-------|-------|---------|
+| `code-explorer` | Explore | Traces execution paths, maps architecture |
+| `code-architect` | Design | Proposes implementation approaches |
+| `code-reviewer` | Review | Checks quality, bugs, conventions |
+
+Additional agents for plugin development:
+
+| Agent | Purpose |
+|-------|---------|
+| `agent-creator` | Creates new agents |
+| `plugin-validator` | Validates plugin structure |
+| `skill-reviewer` | Reviews skill quality |
+
+## Plugin Development Skills
+
+Create Claude Code plugins with guided workflows:
 
 | Skill | Purpose |
 |-------|---------|
-| `/harness:orchestrator` | Full guided workflow from start to finish |
-| `/harness:feature-discovery` | Initialize a new feature, create artifacts directory |
-| `/harness:explore-codebase` | Deep exploration to understand patterns and architecture |
-| `/harness:gather-requirements` | Systematically identify and resolve ambiguities |
-| `/harness:design-architecture` | Design multiple approaches with trade-offs |
-| `/harness:implement-feature` | Build following the designed architecture |
-| `/harness:review-code` | Review for bugs, quality, conventions |
-| `/harness:verify-testing` | Generate testing checklist, guide verification |
-| `/harness:summarize-feature` | Document what was built, decisions, lessons |
-| `/harness:red-green-refactor` | TDD workflow for testable functionality |
-
-## Plugin Development
-
-Create project-specific skills, agents, hooks, and commands:
-
-| Skill | Purpose |
-|-------|---------|
-| `/harness:skill-development` | Create new skills with proper structure |
-| `/harness:agent-development` | Create autonomous agents with system prompts |
-| `/harness:command-development` | Create slash commands with arguments |
-| `/harness:hook-development` | Create event hooks (PreToolUse, PostToolUse, etc.) |
-| `/harness:plugin-structure` | Scaffold complete plugin directory layout |
-| `/harness:mcp-integration` | Add MCP servers to plugins |
-| `/harness:lsp-integration` | Add language server support |
-| `/harness:plugin-settings` | Add configurable settings to plugins |
-
-## The Workflow
-
-```
-/harness:orchestrator
-    │
-    ├── feature-discovery     # What are we building?
-    ├── explore-codebase      # How does existing code work?
-    ├── gather-requirements   # What exactly do we need?
-    ├── design-architecture   # How should we build it?
-    ├── implement-feature     # Build it
-    ├── review-code           # Check quality
-    ├── verify-testing        # Manual testing
-    └── summarize-feature     # Document it
-```
-
-Each step creates artifacts in `.artifacts/<feature-name>/` for tracking progress.
-
-## Why Template-Based?
-
-Unlike traditional plugins, harness bootstraps files into your project because:
-
-1. **Version Control**: Skills evolve with your project through git
-2. **Team Sharing**: Everyone gets the same workflows when they clone
-3. **Customization**: Modify skills for your specific project needs
-4. **Code Review**: Changes to workflows go through your normal review process
-
-Use `--update` to pull in upstream improvements while preserving your customizations.
+| `harness:plugin-structure` | Scaffold plugin directory layout |
+| `harness:skill-development` | Create skills with proper structure |
+| `harness:agent-development` | Create autonomous agents |
+| `harness:command-development` | Create slash commands |
+| `harness:hook-development` | Create event hooks |
+| `harness:mcp-integration` | Add MCP servers |
+| `harness:lsp-integration` | Add language server support |
+| `harness:plugin-settings` | Add configurable settings |
 
 ## License
 
