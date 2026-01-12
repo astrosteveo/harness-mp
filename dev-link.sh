@@ -10,6 +10,7 @@ DEV_VERSION="9.9.9-dev"
 
 # Discover all plugins dynamically
 for dev_path in "$DEV_BASE"/*/; do
+    dev_path="${dev_path%/}"  # Remove trailing slash
     plugin=$(basename "$dev_path")
     cache_path="$CACHE_BASE/$plugin/$DEV_VERSION"
 
