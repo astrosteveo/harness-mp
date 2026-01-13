@@ -10,6 +10,8 @@ allowed-tools:
   - Edit
   - Glob
   - Grep
+  - WebSearch
+  - WebFetch
   - AskUserQuestion
   - mcp__plugin_engram-mcp_engram__*
 hooks:
@@ -70,9 +72,73 @@ Edit `progress.md`:
 - Check off "Requirements"
 - Add session log entry
 
-### Step 3: Launch Architect Agents
+### Step 3: Research Current Best Practices
 
-Launch 2-3 architect agents in parallel to explore different approaches:
+**IMPORTANT:** Before designing, research how others are solving similar problems today.
+
+Perform 2-4 web searches based on the feature type:
+
+```
+WebSearch
+  query: "{feature_description} best practices 2025"
+```
+
+```
+WebSearch
+  query: "{feature_type} modern architecture patterns"
+```
+
+```
+WebSearch
+  query: "{technology_stack} {feature_description} implementation guide"
+```
+
+If relevant frameworks or libraries might help:
+```
+WebSearch
+  query: "{feature_type} libraries frameworks comparison 2025"
+```
+
+**What to look for:**
+- Current best practices and patterns
+- Modern frameworks/libraries that solve this problem
+- Common pitfalls others have encountered
+- Performance considerations
+- Security best practices
+
+**Summarize findings:**
+- List 2-3 relevant approaches from research
+- Note any libraries/frameworks worth considering
+- Flag any outdated patterns to avoid
+- Identify industry-standard solutions
+
+If a specific article or documentation looks valuable, use WebFetch to get details:
+```
+WebFetch
+  url: "{relevant_url}"
+  prompt: "Extract the key architectural patterns and recommendations for {feature_type}"
+```
+
+**Add research findings to progress.md:**
+```markdown
+## Design Research
+
+### Web Research ({date})
+- **Best Practices:** {summary}
+- **Recommended Approaches:** {list}
+- **Libraries to Consider:** {list}
+- **Patterns to Avoid:** {outdated approaches}
+- **Key Sources:** {urls}
+```
+
+### Step 4: Launch Architect Agents
+
+Launch 2-3 architect agents in parallel to explore different approaches.
+
+**Include research context in all prompts:**
+- Best practices discovered in Step 3
+- Recommended libraries/frameworks
+- Patterns to avoid
 
 **Agent 1: Minimal Change Approach**
 ```
@@ -80,20 +146,25 @@ Task with subagent_type: "harness:code-architect"
 prompt: "Design a MINIMAL CHANGE approach for '{feature_description}'.
 Requirements: {key requirements}
 Existing patterns: {from exploration}
+Current best practices: {from web research}
+Libraries to consider: {from research}
 
 Focus on: Smallest possible change, maximum reuse of existing code, fastest to implement.
 Document: Files to modify, components to reuse, trade-offs."
 ```
 
-**Agent 2: Clean Architecture Approach**
+**Agent 2: Modern Best Practices Approach**
 ```
 Task with subagent_type: "harness:code-architect"
-prompt: "Design a CLEAN ARCHITECTURE approach for '{feature_description}'.
+prompt: "Design a MODERN BEST PRACTICES approach for '{feature_description}'.
 Requirements: {key requirements}
 Existing patterns: {from exploration}
+Current best practices: {from web research}
+Recommended libraries: {from research}
+Patterns to avoid: {outdated approaches from research}
 
-Focus on: Maintainability, clear abstractions, future extensibility.
-Document: New components, interfaces, data flow, trade-offs."
+Focus on: Industry-standard solutions, modern patterns, leveraging well-maintained libraries.
+Document: Recommended stack, why these choices align with current standards, trade-offs."
 ```
 
 **Agent 3: Pragmatic Approach**
@@ -102,12 +173,14 @@ Task with subagent_type: "harness:code-architect"
 prompt: "Design a PRAGMATIC approach for '{feature_description}'.
 Requirements: {key requirements}
 Existing patterns: {from exploration}
+Current best practices: {from web research}
+Libraries to consider: {from research}
 
-Focus on: Balance of speed and quality, reasonable abstractions, matches team patterns.
+Focus on: Balance of modern practices and codebase consistency, reasonable abstractions.
 Document: Recommended structure, key decisions, trade-offs."
 ```
 
-### Step 4: Synthesize Approaches
+### Step 5: Synthesize Approaches
 
 After agents complete, synthesize findings:
 
@@ -120,7 +193,7 @@ After agents complete, synthesize findings:
    - Implementation complexity
    - Future maintainability
 
-### Step 5: Present Options to User
+### Step 6: Present Options to User
 
 Present a clear comparison:
 
@@ -156,7 +229,7 @@ Ask: "Which approach would you like to use?"
 
 **PAUSE POINT** - Wait for user selection.
 
-### Step 6: Create Design Document
+### Step 7: Create Design Document
 
 After user selects, write `.artifacts/{slug}/design.md`:
 
@@ -224,7 +297,7 @@ After user selects, write `.artifacts/{slug}/design.md`:
 - {Any remaining questions for implementation}
 ```
 
-### Step 7: Persist to Engram
+### Step 8: Persist to Engram
 
 Record the architectural decision:
 
@@ -243,7 +316,7 @@ mcp__plugin_engram-mcp_engram__memory_remember
   tags: ["architecture", "{slug}", "{pattern-type}"]
 ```
 
-### Step 8: Commit Design
+### Step 9: Commit Design
 
 Commit the design document:
 
@@ -252,7 +325,7 @@ git add .artifacts/{feature-slug}/
 git commit -m "docs({feature-slug}): select {approach-name} architecture"
 ```
 
-### Step 9: Prepare Handoff
+### Step 10: Prepare Handoff
 
 Summarize for Implement phase:
 - Chosen approach name
