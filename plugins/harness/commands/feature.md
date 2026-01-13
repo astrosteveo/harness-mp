@@ -1,604 +1,278 @@
 ---
-description: Start or resume feature development workflow
-allowed-tools: Read, Write, Edit, Bash, Glob, Grep, Task, TodoWrite, mcp__plugin_engram-mcp_engram__memory_search, mcp__plugin_engram-mcp_engram__memory_remember, mcp__plugin_engram-mcp_engram__memory_sync
+description: Skill-based feature development workflow
 argument-hint: <feature-description> [--phase <name>] [--tdd] [--skip <phase>]
+allowed-tools:
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Bash(git:*)
+  - Bash(ls:*)
+  - Skill
+  - mcp__plugin_engram-mcp_engram__*
 ---
 
-# Feature Development Workflow
+# Feature Development Orchestrator
 
-You are orchestrating a structured feature development workflow. Drive the process autonomously, pausing only at decision points where user input is required.
+Coordinates feature development through 8 skill-based phases.
 
-## Arguments
+```
+PHASES: Discovery → Explore → Requirements → Design → Implement → Review → Testing → Summary
+                                   ⏸           ⏸         ⏸          ⏸        ⏸
+```
 
-- `$ARGUMENTS` - Feature description and optional flags
-- `--phase <name>` - Jump to specific phase (discovery, explore, requirements, design, implement, review, testing, summary)
-- `--tdd` - Use test-driven development for implementation
-- `--skip <phase>` - Skip a phase (can be repeated)
+Phases marked ⏸ have pause points requiring user confirmation.
 
----
+## Phase Skills
 
-# Initialization
+| # | Phase | Skill | Purpose |
+|---|-------|-------|---------|
+| 1 | Discovery | `harness:workflow-discovery` | Understand request, create tracking |
+| 2 | Explore | `harness:workflow-explore` | Map codebase patterns |
+| 3 | Requirements | `harness:workflow-requirements` | Gather specifications |
+| 4 | Design | `harness:workflow-design` | Select architecture |
+| 5 | Implement | `harness:workflow-implement` | Build the feature |
+| 6 | Review | `harness:workflow-review` | Code quality check |
+| 7 | Testing | `harness:workflow-testing` | User verification |
+| 8 | Summary | `harness:workflow-summary` | Document completion |
 
-## Step 1: Search Project Memory
+## Orchestration
 
-Use `mcp__plugin_engram-mcp_engram__memory_search` to find relevant past context:
-- Previous work on similar features
-- Past architectural decisions that might apply
-- Lessons learned from related implementations
+### Step 1: Parse Arguments
 
-If relevant findings exist, present them: "I found previous context that may be relevant: [summary]"
+From `$ARGUMENTS` extract:
+- `feature_description` (required): What to build
+- `--phase <name>`: Jump to specific phase (discovery|explore|requirements|design|implement|review|testing|summary)
+- `--tdd`: Enable test-driven development mode
+- `--skip <phase>`: Skip a phase (can repeat)
 
-## Step 2: Check for Existing Artifacts
+### Step 2: Search Engram for Context
 
-Check if resuming an existing feature:
+```
+mcp__plugin_engram-mcp_engram__memory_resume
+```
+
+Check for relevant prior work. If recent session had same feature, note context.
+
+```
+mcp__plugin_engram-mcp_engram__memory_search
+  query: "{feature_description} feature"
+  n_results: 3
+```
+
+If similar features found, summarize briefly.
+
+### Step 3: Check for Existing Artifacts
+
 ```bash
 ls -la .artifacts/*/progress.md 2>/dev/null
 ```
 
-**If artifacts exist:**
-1. Read `progress.md` to determine current phase
-2. Present: "Resuming **{feature-name}** from **{phase}**"
-3. Jump to that phase
+**If matching artifacts found:**
+1. Generate expected slug from `feature_description`
+2. Check if `.artifacts/{slug}/progress.md` exists
+3. If yes: Read it, extract current phase from "Phase:" line
+4. Announce: "Resuming **{feature}** from **{phase}** phase"
+5. Set `current_phase` to that phase
 
-**If no artifacts:** Proceed to Phase 1: Discovery
+**If no matching artifacts AND no `--phase` flag:**
+1. Set `current_phase` to "discovery"
 
-## Step 3: Load Configuration
+**If `--phase` flag provided:**
+1. Set `current_phase` to specified phase
+2. If artifacts don't exist, warn user and start from discovery
 
-Read configuration (in priority order, merge settings):
-1. `.claude/harness.yaml` (project overrides)
-2. `~/.claude/harness.yaml` (user defaults)
-3. `${CLAUDE_PLUGIN_ROOT}/config/workflow.yaml` (plugin defaults)
+### Step 4: Build Skill Arguments
 
-Note: skipped phases, TDD mode, agent count, model preferences.
-
----
-
-# Phase 1: Discovery
-
-**Goal:** Understand what needs to be built and set up tracking.
-
-## Actions
-
-1. Generate `feature-slug` from the feature name (lowercase, hyphenated)
-2. Create `.artifacts/{feature-slug}/` directory
-3. If the feature request is unclear, ask:
-   - What problem are you solving?
-   - What should the feature do?
-   - Any constraints or requirements?
-4. Summarize understanding and confirm with user
-
-## Artifact: progress.md
-
-Create `.artifacts/{feature-slug}/progress.md`:
-
-```markdown
-# {Feature Name} - Progress
-
-## Status
-Phase: Discovery
-Started: {date}
-Last Updated: {date}
-
-## Checklist
-- [x] Discovery
-- [ ] Codebase Exploration
-- [ ] Requirements
-- [ ] Architecture Design
-- [ ] Implementation
-- [ ] Code Review
-- [ ] Testing
-- [ ] Summary
-
-## Session Log
-### {date}
-- Started feature development
-- Initial request: {summary}
-```
-
-## Git Commit
+Construct arguments for phase skill:
 
 ```
-docs({feature-slug}): initialize feature tracking
+--slug {feature_slug}
+--description "{feature_description}"
+--artifacts .artifacts/{feature_slug}/
+--tdd {true|false}
 ```
 
-**Automatic transition** to Phase 2.
+### Step 5: Invoke Current Phase Skill
 
----
-
-# Phase 2: Explore Codebase
-
-**Goal:** Deep understanding of existing patterns and architecture.
-
-## Actions
-
-1. Launch 2-3 `code-explorer` agents in parallel using Task tool with `subagent_type: "harness:code-explorer"`. Each agent should focus on a different aspect:
-   - "Find similar features and trace their implementation"
-   - "Map the architecture and abstractions for this area"
-   - "Identify integration points and extension patterns"
-
-2. Wait for agents to complete
-
-3. Read all key files identified by the agents
-
-4. Present comprehensive summary of findings
-
-## Artifact Update
-
-Add to `progress.md`:
-
-```markdown
-## Codebase Exploration
-
-### Key Patterns
-- {Pattern 1}: {description}
-- {Pattern 2}: {description}
-
-### Relevant Files
-| File | Purpose | Relevance |
-|------|---------|-----------|
-| `{path}` | {what it does} | {why it matters} |
-
-### Architecture Notes
-{High-level structure understanding}
-
-### Integration Points
-{Where the new feature connects to existing code}
-```
-
-## Git Commit
+Invoke the appropriate skill:
 
 ```
-docs({feature-slug}): document codebase exploration
+Skill
+  skill: "harness:workflow-{current_phase}"
+  args: "{constructed arguments}"
 ```
 
-**Automatic transition** to Phase 3.
+Each skill runs with `context: fork`:
+- Isolated context (doesn't bloat main conversation)
+- State passes through artifacts
+- Engram provides cross-context memory
 
----
+### Step 6: Handle Skill Output
 
-# Phase 3: Gather Requirements
+When skill completes, examine its output:
 
-**Goal:** Resolve all ambiguities before designing.
+**If output contains "PHASE_COMPLETE":**
+1. Determine next phase in sequence
+2. Check if next phase should be skipped (via `--skip`)
+3. If next phase has pause point, present summary and ask to continue
+4. Otherwise, invoke next phase skill
 
-**CRITICAL:** This phase is essential. Do not skip.
+**If output contains "WORKFLOW_COMPLETE":**
+1. Feature is done
+2. Present final completion message
+3. Stop orchestration
 
-## Actions
+**If output contains "USER_INPUT_REQUIRED":**
+1. The skill needs user input
+2. Present the questions to user
+3. Collect answers
+4. Re-invoke skill with answers appended to args
 
-1. Review exploration findings and original request
-2. Identify underspecified aspects:
-   - Edge cases
-   - Error handling
-   - Integration points
-   - Scope boundaries
-   - Performance needs
-3. **Ask questions ONE AT A TIME**
-4. **For each question, provide a recommendation**
-5. Wait for user answer before asking the next question
-6. Continue until all ambiguities resolved
+**If output contains error or "BLOCKED":**
+1. Present error to user
+2. Ask how to proceed (retry / skip / abort)
+3. Act on user choice
 
-## Question Format
+### Step 7: Phase Transitions
 
-```
-**Question {N}/{Total}**: {The specific question}
+Transition logic:
 
-**Recommendation:** {Your suggested answer with rationale}
-```
+| From | To | Pause? |
+|------|-----|--------|
+| Discovery | Explore | No |
+| Explore | Requirements | No |
+| Requirements | Design | Yes - "Ready to design?" |
+| Design | Implement | Yes - "Ready to implement?" |
+| Implement | Review | Yes - "Ready for review?" |
+| Review | Testing | Yes - "Ready for testing?" |
+| Testing | Summary | Yes - "Confirm feature complete?" |
+| Summary | (end) | - |
 
-If user says "whatever you think is best", apply your recommendation and confirm.
+At pause points:
+1. Present phase completion summary
+2. Ask: "Ready to proceed to {next_phase}?"
+3. Wait for confirmation ("yes", "proceed", "continue")
+4. If user wants changes, handle appropriately
 
-## PAUSE POINT
+### Step 8: Error Recovery
 
-Wait for user answers to each question.
+**Skill timeout or failure:**
+1. Check artifacts for partial progress
+2. Offer to retry from last good state
+3. Search engram for similar errors
 
-## Artifact: requirements.md
+**Missing artifacts:**
+1. Warn user
+2. Offer to restart from discovery
+3. Or jump to specified phase with --phase
 
-After all questions answered, create `.artifacts/{feature-slug}/requirements.md`:
+**User abort:**
+1. Save current state to progress.md
+2. Sync to engram
+3. Note how to resume later
 
-```markdown
-# {Feature Name} - Requirements
+## State Management
 
-## Overview
-{Brief description}
+All state flows through artifacts in `.artifacts/{feature-slug}/`:
 
-## Problem Statement
-{What problem this solves}
+| Artifact | Created By | Contains |
+|----------|------------|----------|
+| `progress.md` | Discovery | Phase tracking, session log |
+| `requirements.md` | Requirements | Feature specification |
+| `design.md` | Design | Architecture decision |
+| `plan.md` | Implement | Implementation steps |
+| `summary.md` | Summary | Completion record |
 
-## User Stories
-- As a {user}, I want to {action} so that {benefit}
+Each skill:
+1. Reads artifacts from previous phases
+2. Updates `progress.md` with current phase
+3. Creates its phase-specific artifact
+4. Persists insights to engram
 
-## Functional Requirements
-1. {Requirement 1}
-2. {Requirement 2}
+## Engram Integration
 
-## Non-Functional Requirements
-- Performance: {constraints}
-- Compatibility: {constraints}
+### Workflow Start
+- `memory_resume`: Get session context
+- `memory_search`: Find similar features
 
-## Clarifications
-### Q: {Question 1}
-A: {Answer}
+### Each Phase (via skills)
+- `memory_search`: Phase-specific context
+- `memory_insights`: Relevant decisions/lessons
+- `memory_decision`: Record choices made
+- `memory_lesson`: Record patterns/gotchas
 
-## Out of Scope
-- {Excluded items}
-```
+### Workflow End (Summary phase)
+- `memory_remember`: Comprehensive feature record
+- `memory_sync`: Ensure everything indexed
 
-## Git Commit
+### Cross-Session Continuity
 
-```
-docs({feature-slug}): finalize requirements
-```
+User closes Claude → comes back later:
+1. `/harness:feature "dark mode"`
+2. Orchestrator finds `.artifacts/dark-mode/progress.md`
+3. `memory_resume` provides session context
+4. Workflow continues from last phase
 
-**Automatic transition** to Phase 4.
+## Quick Reference
 
----
+| Command | Effect |
+|---------|--------|
+| `/harness:feature "add auth"` | Start new or resume |
+| `/harness:feature --phase design` | Jump to design |
+| `/harness:feature --tdd` | Enable TDD mode |
+| `/harness:feature --skip explore` | Skip explore phase |
 
-# Phase 4: Design Architecture
-
-**Goal:** Evaluate multiple approaches and select the best one.
-
-## Actions
-
-1. Search engram for past architectural patterns relevant to this feature type
-
-2. Launch 2-3 `code-architect` agents in parallel using Task tool with `subagent_type: "harness:code-architect"`. Each with a different focus:
-   - **Minimal changes**: Smallest change, maximum reuse
-   - **Clean architecture**: Maintainability, elegant abstractions
-   - **Pragmatic balance**: Speed + quality trade-off
-
-3. Review all approaches and form your recommendation
-
-4. Present to user:
-   - Brief summary of each approach
-   - Trade-offs comparison
-   - **Your recommendation with reasoning**
-
-## PAUSE POINT
-
-Ask user: "Which approach would you like to use?"
-
-## Artifact: design.md
-
-After user selects, create `.artifacts/{feature-slug}/design.md`:
-
-```markdown
-# {Feature Name} - Design
-
-## Chosen Approach
-{Name}
-
-## Rationale
-{Why selected}
-
-## Approaches Considered
-
-### Approach A: {Name}
-- **Summary**: {description}
-- **Pros**: {list}
-- **Cons**: {list}
-
-### Approach B: {Name}
-...
-
-## Architecture Overview
-{High-level description}
-
-## Component Design
-### {Component 1}
-- Purpose: {what it does}
-- Interface: {public API}
-- Dependencies: {what it uses}
-
-## Data Flow
-{How data moves through the system}
-
-## Risks and Mitigations
-| Risk | Mitigation |
-|------|------------|
-| {risk} | {mitigation} |
-```
-
-## Git Commit
+## Example Flow
 
 ```
-docs({feature-slug}): select {approach-name} architecture
+User: /harness:feature "add dark mode toggle"
+
+Orchestrator:
+  → Searches engram: finds past "theming" work
+  → No existing artifacts for "dark-mode-toggle"
+  → Invokes harness:workflow-discovery
+
+Discovery skill (forked):
+  → Searches engram for similar features
+  → Asks clarifying questions
+  → Creates .artifacts/dark-mode-toggle/
+  → Creates progress.md
+  → Returns "PHASE_COMPLETE"
+
+Orchestrator:
+  → Invokes harness:workflow-explore
+
+Explore skill (forked):
+  → Searches engram for architecture patterns
+  → Launches explorer agents
+  → Documents findings
+  → Returns "PHASE_COMPLETE"
+
+Orchestrator:
+  → Invokes harness:workflow-requirements
+
+Requirements skill (forked):
+  → Asks requirement questions (pause points)
+  → Creates requirements.md
+  → Returns "PHASE_COMPLETE"
+
+Orchestrator:
+  → PAUSE: "Ready to proceed to Design?"
+
+User: "yes"
+
+Orchestrator:
+  → Invokes harness:workflow-design
+
+... continues through all phases ...
+
+Summary skill (forked):
+  → Creates summary.md
+  → Persists to engram
+  → Returns "WORKFLOW_COMPLETE"
+
+Orchestrator:
+  → Presents completion message
+  → Feature development complete!
 ```
-
-**Automatic transition** to Phase 5.
-
----
-
-# Phase 5: Implement Feature
-
-**Goal:** Build the feature following the approved design.
-
-Check if TDD mode is enabled (via `--tdd` flag or config `tdd.mode: always`).
-
-## If TDD Mode
-
-Follow the red-green-refactor cycle:
-
-### TDD Setup
-1. Verify test framework is configured
-2. Create `test-plan.md` with ordered test cases (simplest to complex)
-
-### For Each Test Case
-1. **RED**: Write failing test, verify it fails, commit: `test({feature-slug}): add failing test for {behavior}`
-2. **GREEN**: Write minimum code to pass, commit: `feat({feature-slug}): implement {behavior}`
-3. **REFACTOR**: Clean up if needed, commit: `refactor({feature-slug}): {description}`
-
-### TDD Artifacts
-- `.artifacts/{feature-slug}/test-plan.md` - Ordered test cases
-- `.artifacts/{feature-slug}/tdd-progress.md` - Cycle tracking
-
-## If Standard Mode
-
-### PAUSE POINT
-
-Present implementation plan and wait for approval before coding.
-
-## Artifact: plan.md
-
-Create `.artifacts/{feature-slug}/plan.md`:
-
-```markdown
-# {Feature Name} - Implementation Plan
-
-## Files to Modify
-| File | Changes |
-|------|---------|
-| `{path}` | {what changes} |
-
-## Files to Create
-| File | Purpose |
-|------|---------|
-| `{path}` | {purpose} |
-
-## Implementation Steps
-1. [ ] {Step 1}
-2. [ ] {Step 2}
-
-## Testing Strategy
-{How to verify it works}
-```
-
-## Implementation
-
-After approval:
-1. Implement following the plan
-2. Follow codebase conventions strictly
-3. Update todos as you progress
-4. Commit frequently:
-   - `feat({feature-slug}): {description}`
-   - `fix({feature-slug}): {description}`
-
-## Git Commits
-
-Frequent throughout:
-```
-feat({feature-slug}): add {component}
-feat({feature-slug}): implement {behavior}
-fix({feature-slug}): {fix description}
-```
-
-**Automatic transition** to Phase 6.
-
----
-
-# Phase 6: Code Review
-
-**Goal:** Ensure quality and correctness.
-
-## Actions
-
-1. Launch 3 `code-reviewer` agents in parallel using Task tool with `subagent_type: "harness:code-reviewer"`. Each with different focus:
-   - **Simplicity/DRY/Elegance**: Duplication, complexity, clarity
-   - **Bugs/Correctness**: Logic errors, edge cases, runtime issues
-   - **Conventions/Patterns**: Consistency with codebase
-
-2. Consolidate findings by severity
-
-3. Present findings organized as:
-   - High Priority (recommend fixing now)
-   - Medium Priority (consider fixing)
-   - Low Priority (nice to have)
-
-4. Ask user: "What would you like to do?"
-   - Fix now
-   - Fix later
-   - Proceed as-is
-
-5. Address issues based on user decision
-
-## Artifact Update
-
-Add to `progress.md`:
-
-```markdown
-## Code Review
-
-### Issues Found
-| Severity | Issue | Resolution |
-|----------|-------|------------|
-| High | {issue} | Fixed / Deferred / Accepted |
-
-### Summary
-- Total: {N}, Fixed: {N}, Deferred: {N}
-```
-
-## Git Commits
-
-```
-fix({feature-slug}): {fix from review}
-```
-
-**Automatic transition** to Phase 7.
-
----
-
-# Phase 7: Testing Verification
-
-**Goal:** User verifies the feature works correctly.
-
-**CRITICAL:** Do not skip. Feature cannot be closed until user confirms.
-
-## Actions
-
-1. Read `requirements.md` to understand what needs testing
-2. Present testing checklist with clear steps and expected results
-3. Ask user to perform tests and report back
-
-## Testing Checklist Format
-
-```markdown
-## Manual Testing
-
-Please test and confirm each works:
-
-### Test 1: {Name}
-**Steps:**
-1. {Step 1}
-2. {Step 2}
-
-**Expected:** {What should happen}
-
----
-
-Reply with PASS or FAIL for each test.
-```
-
-## PAUSE POINT
-
-Wait for user confirmation: "Testing passed" or issue reports.
-
-## If Issues Found
-
-1. Document the issue
-2. Fix it
-3. Commit: `fix({feature-slug}): {description}`
-4. Ask user to re-test
-
-## Artifact Update
-
-Add to `progress.md`:
-
-```markdown
-## Testing
-- Date: {date}
-- Result: PASSED
-
-| Test | Result |
-|------|--------|
-| {name} | PASS |
-```
-
-## Git Commit
-
-```
-docs({feature-slug}): record successful testing
-```
-
-**Automatic transition** to Phase 8.
-
----
-
-# Phase 8: Summary
-
-**Goal:** Document completion and persist learnings.
-
-## Actions
-
-1. Mark all checklist items complete in `progress.md`
-2. Create `summary.md`
-3. Update `.artifacts/roadmap.md` if it exists:
-   - Move feature to "Completed" section
-   - Add deferred items to "Planned" section
-
-## Artifact: summary.md
-
-Create `.artifacts/{feature-slug}/summary.md`:
-
-```markdown
-# {Feature Name} - Summary
-
-## Completed
-{Date}
-
-## What Was Built
-{Description}
-
-## Key Decisions
-| Decision | Rationale |
-|----------|-----------|
-| {decision} | {why} |
-
-## Files Changed
-| File | Changes |
-|------|---------|
-| `{path}` | {summary} |
-
-## Testing
-- Result: PASSED
-- {What was verified}
-
-## Known Limitations
-- {Any limitations}
-
-## Future Improvements
-- {Potential enhancements}
-
-## Lessons Learned
-- {What went well}
-- {What could improve}
-```
-
-## Persist to Memory
-
-Use `mcp__plugin_engram-mcp_engram__memory_remember` to save key learnings:
-
-```
-For {feature-name}: Implemented using {pattern}. Key decision: {decision}. Lesson: {lesson}.
-```
-
-## Sync Session
-
-Use `mcp__plugin_engram-mcp_engram__memory_sync` to index this session.
-
-## Git Commit
-
-```
-docs({feature-slug}): complete feature summary
-```
-
-## Complete
-
-Congratulate the user:
-- Phases completed
-- Artifacts created
-- Key accomplishments
-
----
-
-# Phase Navigation
-
-Jump to any phase with `--phase`:
-
-| Phase | Name |
-|-------|------|
-| 1 | `discovery` |
-| 2 | `explore` |
-| 3 | `requirements` |
-| 4 | `design` |
-| 5 | `implement` |
-| 6 | `review` |
-| 7 | `testing` |
-| 8 | `summary` |
-
-Example: `/harness:feature --phase design`
-
----
-
-# Error Recovery
-
-If something goes wrong:
-1. Check `progress.md` for last known state
-2. Restart phase: `/harness:feature --phase {name}`
-3. Search engram for similar past issues
