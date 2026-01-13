@@ -185,13 +185,17 @@ Present consolidated findings to user:
 - High: {N} | Medium: {N} | Low: {N}
 ```
 
-**PAUSE POINT**
+**CONDITIONAL PAUSE:**
 
-Ask: "How would you like to proceed?"
-- Fix all high priority now
-- Fix high + medium now
-- Review each and decide
-- Proceed as-is (accept risks)
+**If NO high priority issues:**
+- Auto-fix any medium issues that are straightforward
+- Briefly note: "Review complete. {N} minor issues addressed. Proceeding to testing."
+- Continue automatically
+
+**If high priority issues exist:**
+- ⏸ PAUSE and ask: "Found {N} high priority issues. Fix now?"
+- Fix issues based on user response
+- Then continue automatically
 
 ### Step 6: Apply Fixes
 

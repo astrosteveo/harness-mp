@@ -73,33 +73,37 @@ Examples:
 mkdir -p .artifacts/{feature-slug}
 ```
 
-### Step 4: Clarify Feature Understanding
+### Step 4: Clarify Feature Understanding (if needed)
 
-If the feature request is unclear, ask clarifying questions using AskUserQuestion:
+**Only ask questions if genuinely unclear.** If the request is specific enough to proceed, skip to Step 5.
 
-Potential questions:
+If clarification needed, ask using AskUserQuestion:
 - What problem does this feature solve?
 - What should the feature do (high-level)?
 - Are there any constraints or requirements?
-- Is this similar to anything existing in the codebase?
 
-Present questions one at a time. Wait for responses.
+**Keep questions minimal.** Better to make reasonable assumptions and validate in Requirements phase.
 
 If user says "whatever you think is best" → apply reasonable defaults.
 
-### Step 5: Confirm Understanding
+### Step 5: Quick Confirmation
 
-Present a brief summary of the feature:
+Present a brief summary:
 
 ```
 **Feature:** {name}
 **Purpose:** {what it does}
 **Scope:** {high-level scope}
+
+Proceeding with Discovery → Explore → Requirements...
 ```
 
-Ask: "Does this capture what you want to build?"
+**Only pause if:**
+- Feature scope is ambiguous
+- Multiple interpretations possible
+- User explicitly requested confirmation
 
-Wait for confirmation before proceeding.
+**Otherwise:** State understanding and continue automatically. Requirements phase will validate details.
 
 ### Step 6: Create Progress Artifact
 

@@ -18,10 +18,15 @@ Coordinates feature development through 8 skill-based phases.
 
 ```
 PHASES: Discovery → Explore → Requirements → Design → Implement → Review → Testing → Summary
-                                   ⏸           ⏸         ⏸          ⏸        ⏸
+        \_________auto________/     ⏸          ⏸         ⏸      \_auto_/     ⏸       ⏸
 ```
 
-Phases marked ⏸ have pause points requiring user confirmation.
+**Flow:** Automatic between phases. Pauses are WITHIN skills for confirmations:
+- ⏸ Requirements: Confirm specs
+- ⏸ Design: Confirm approach
+- ⏸ Implement: Confirm plan
+- ⏸ Testing: User verifies feature
+- ⏸ Summary: Offer push/PR
 
 ## Phase Skills
 
@@ -136,24 +141,35 @@ When skill completes, examine its output:
 
 ### Step 7: Phase Transitions
 
-Transition logic:
+**Philosophy:** Flow automatically between phases. Pauses happen WITHIN skills for meaningful decisions, not between phases.
 
-| From | To | Pause? |
-|------|-----|--------|
-| Discovery | Explore | No |
-| Explore | Requirements | No |
-| Requirements | Design | Yes - "Ready to design?" |
-| Design | Implement | Yes - "Ready to implement?" |
-| Implement | Review | Yes - "Ready for review?" |
-| Review | Testing | Yes - "Ready for testing?" |
-| Testing | Summary | Yes - "Confirm feature complete?" |
-| Summary | (end) | - |
+**Automatic transitions (no orchestrator pause):**
 
-At pause points:
-1. Present phase completion summary
-2. Ask: "Ready to proceed to {next_phase}?"
-3. Wait for confirmation ("yes", "proceed", "continue")
-4. If user wants changes, handle appropriately
+| From | To | Notes |
+|------|-----|-------|
+| Discovery | Explore | Gather context |
+| Explore | Requirements | Continue gathering |
+| Requirements | Design | After user confirms requirements |
+| Design | Implement | After user confirms approach |
+| Implement | Review | Code complete, auto-review |
+| Review | Testing | Issues addressed, auto-test |
+| Testing | Summary | After user verifies feature |
+| Summary | (end) | After push/PR offer |
+
+**Pauses happen WITHIN skills (not between):**
+
+| Skill | Internal Pause | Purpose |
+|-------|----------------|---------|
+| Requirements | After gathering questions | Confirm specifications |
+| Design | After presenting approaches | Confirm architecture |
+| Implement | After creating plan.md | Confirm implementation plan |
+| Testing | After presenting test checklist | User verifies feature works |
+| Summary | After completion | Offer push/PR |
+
+**User interaction is minimal:**
+- Skills ask targeted questions
+- User confirms or provides feedback
+- Workflow continues automatically after confirmation
 
 ### Step 8: Error Recovery
 
@@ -228,51 +244,65 @@ User closes Claude → comes back later:
 ```
 User: /harness:feature "add dark mode toggle"
 
-Orchestrator:
-  → Searches engram: finds past "theming" work
-  → No existing artifacts for "dark-mode-toggle"
-  → Invokes harness:workflow-discovery
+═══ AUTOMATIC: Discovery → Explore → Requirements ═══
 
-Discovery skill (forked):
-  → Searches engram for similar features
-  → Asks clarifying questions
+Discovery skill:
+  → "What problem does dark mode solve?" (clarifying)
   → Creates .artifacts/dark-mode-toggle/
-  → Creates progress.md
-  → Returns "PHASE_COMPLETE"
+  → PHASE_COMPLETE → auto-continues
 
-Orchestrator:
-  → Invokes harness:workflow-explore
-
-Explore skill (forked):
-  → Searches engram for architecture patterns
+Explore skill:
   → Launches explorer agents
-  → Documents findings
-  → Returns "PHASE_COMPLETE"
+  → Documents patterns found
+  → PHASE_COMPLETE → auto-continues
 
-Orchestrator:
-  → Invokes harness:workflow-requirements
-
-Requirements skill (forked):
-  → Asks requirement questions (pause points)
+Requirements skill:
+  → Asks specific questions about edge cases
+  → ⏸ PAUSE: "Here are the requirements. Confirm?"
+  → User: "yes" or provides feedback
   → Creates requirements.md
-  → Returns "PHASE_COMPLETE"
+  → PHASE_COMPLETE → auto-continues
 
-Orchestrator:
-  → PAUSE: "Ready to proceed to Design?"
+═══ Design Phase ═══
 
-User: "yes"
+Design skill:
+  → Searches web for best practices
+  → Launches architect agents
+  → ⏸ PAUSE: "Recommend Approach B. Which do you prefer?"
+  → User: "approach B" or "tell me more about A"
+  → Creates design.md
+  → PHASE_COMPLETE → auto-continues
 
-Orchestrator:
-  → Invokes harness:workflow-design
+═══ Implement Phase ═══
 
-... continues through all phases ...
+Implement skill:
+  → Creates plan.md
+  → ⏸ PAUSE: "Here's the implementation plan. Ready?"
+  → User: "yes"
+  → Implements code, commits as it goes
+  → PHASE_COMPLETE → auto-continues
 
-Summary skill (forked):
+═══ AUTOMATIC: Review → Testing ═══
+
+Review skill:
+  → Launches reviewer agents
+  → Fixes any high-priority issues
+  → PHASE_COMPLETE → auto-continues
+
+Testing skill:
+  → Presents test checklist
+  → ⏸ PAUSE: "Please verify: [checklist]. All working?"
+  → User: "yes" or reports issues
+  → PHASE_COMPLETE → auto-continues
+
+═══ Summary Phase ═══
+
+Summary skill:
   → Creates summary.md
   → Persists to engram
-  → Returns "WORKFLOW_COMPLETE"
+  → ⏸ PAUSE: "Push changes? Create PR?"
+  → User: "yes, push" or "create PR"
+  → WORKFLOW_COMPLETE
 
-Orchestrator:
-  → Presents completion message
-  → Feature development complete!
+Total user interactions: ~5 confirmations
 ```
