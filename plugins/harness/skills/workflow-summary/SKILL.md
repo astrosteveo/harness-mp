@@ -211,7 +211,16 @@ Ensure everything is indexed:
 mcp__plugin_engram-mcp_engram__memory_sync
 ```
 
-### Step 7: Present Completion Summary
+### Step 7: Commit Summary
+
+Commit the summary document:
+
+```bash
+git add .artifacts/{feature-slug}/
+git commit -m "docs({feature-slug}): complete feature summary"
+```
+
+### Step 8: Present Completion Summary
 
 Present final summary to user:
 
@@ -246,7 +255,42 @@ Present final summary to user:
 The feature has been fully documented and learnings persisted for future sessions.
 ```
 
-### Step 8: Output Completion Signal
+### Step 9: Offer to Push Changes
+
+Check if there are unpushed commits:
+
+```bash
+git log origin/{branch}..HEAD --oneline
+```
+
+If there are unpushed commits, ask the user:
+
+"Would you like to push these changes to the remote repository?"
+
+**If user says yes:**
+```bash
+git push origin {current-branch}
+```
+
+**If user wants a PR:**
+```bash
+gh pr create --title "{feature-name}" --body "## Summary
+{Brief description of what was built}
+
+## Changes
+{List of main changes}
+
+## Testing
+- Manual testing completed
+- User verified feature works
+
+---
+Generated via /harness:feature workflow"
+```
+
+Present the push result or PR URL to the user.
+
+### Step 10: Output Completion Signal
 
 Output "WORKFLOW_COMPLETE" for orchestrator.
 

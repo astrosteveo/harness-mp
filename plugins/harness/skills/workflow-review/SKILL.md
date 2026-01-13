@@ -260,7 +260,17 @@ mcp__plugin_engram-mcp_engram__memory_lesson
   category: "anti_pattern"
 ```
 
-### Step 9: Prepare Handoff
+### Step 9: Commit Review Results
+
+Commit the review documentation (and any remaining fixes):
+
+```bash
+git add .artifacts/{feature-slug}/
+git add -u  # stage any modified files from fixes
+git commit -m "docs({feature-slug}): complete code review"
+```
+
+### Step 10: Prepare Handoff
 
 Summarize for Testing phase:
 - Review status (all clear / issues remaining)

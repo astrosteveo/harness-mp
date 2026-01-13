@@ -243,7 +243,16 @@ mcp__plugin_engram-mcp_engram__memory_remember
   tags: ["architecture", "{slug}", "{pattern-type}"]
 ```
 
-### Step 8: Prepare Handoff
+### Step 8: Commit Design
+
+Commit the design document:
+
+```bash
+git add .artifacts/{feature-slug}/
+git commit -m "docs({feature-slug}): select {approach-name} architecture"
+```
+
+### Step 9: Prepare Handoff
 
 Summarize for Implement phase:
 - Chosen approach name

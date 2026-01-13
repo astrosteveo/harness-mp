@@ -236,7 +236,17 @@ Ask user for explicit confirmation:
 
 Wait for explicit "yes" / "confirmed" / "looks good" before proceeding.
 
-### Step 9: Prepare Handoff
+### Step 9: Commit Testing Results
+
+Commit testing documentation and any fixes:
+
+```bash
+git add .artifacts/{feature-slug}/
+git add -u  # stage any files modified during bug fixes
+git commit -m "docs({feature-slug}): record successful testing"
+```
+
+### Step 10: Prepare Handoff
 
 Summarize for Summary phase:
 - Testing status: PASSED

@@ -135,7 +135,16 @@ mcp__plugin_engram-mcp_engram__memory_lesson
   category: "pattern"
 ```
 
-### Step 7: Prepare Handoff
+### Step 7: Commit Exploration
+
+Commit the exploration findings:
+
+```bash
+git add .artifacts/{feature-slug}/
+git commit -m "docs({feature-slug}): document codebase exploration"
+```
+
+### Step 8: Prepare Handoff
 
 Summarize exploration for the next phase (Requirements):
 - Top 3-5 most important findings

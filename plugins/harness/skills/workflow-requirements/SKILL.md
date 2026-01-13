@@ -196,7 +196,16 @@ mcp__plugin_engram-mcp_engram__memory_remember
   tags: ["requirements", "{slug}"]
 ```
 
-### Step 7: Prepare Handoff
+### Step 7: Commit Requirements
+
+Commit the requirements document:
+
+```bash
+git add .artifacts/{feature-slug}/
+git commit -m "docs({feature-slug}): finalize requirements"
+```
+
+### Step 8: Prepare Handoff
 
 Summarize for Design phase:
 - Top 3-5 most critical requirements

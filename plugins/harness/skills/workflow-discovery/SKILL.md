@@ -145,7 +145,16 @@ mcp__plugin_engram-mcp_engram__memory_remember
   tags: ["feature-start", "{slug}"]
 ```
 
-### Step 8: Prepare Handoff
+### Step 8: Commit Artifacts
+
+Commit the discovery artifacts:
+
+```bash
+git add .artifacts/{feature-slug}/
+git commit -m "docs({feature-slug}): initialize feature tracking"
+```
+
+### Step 9: Prepare Handoff
 
 Output summary for orchestrator/next phase:
 - Feature slug
