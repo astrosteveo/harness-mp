@@ -2,13 +2,6 @@
 name: harness:workflow-requirements
 description: This skill should be used when the user asks to "gather requirements", "define feature requirements", "clarify feature scope", or when the harness:feature orchestrator invokes the Requirements phase.
 context: fork
-agent: general-purpose
-allowed-tools:
-  - Read
-  - Write
-  - Edit
-  - AskUserQuestion
-  - mcp__plugin_engram-mcp_engram__*
 hooks:
   Stop:
     - hooks:
@@ -169,16 +162,6 @@ mcp__plugin_engram-mcp_engram__memory_remember
 ```bash
 git add .artifacts/{slug}/
 git commit -m "docs({slug}): finalize requirements"
-```
-
-### Step 8: Output Completion
-
-```
-REQUIREMENTS COMPLETE
-Core requirements: {count}
-Edge cases documented: {count}
-Out of scope items: {count}
-
 ```
 
 ## Critical Rules

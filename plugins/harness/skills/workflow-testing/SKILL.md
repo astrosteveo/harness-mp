@@ -2,22 +2,6 @@
 name: harness:workflow-testing
 description: This skill should be used when the user asks to "test the feature", "verify it works", "run manual testing", or when the harness:feature orchestrator invokes the Testing phase.
 context: fork
-agent: general-purpose
-allowed-tools:
-  - Read
-  - Write
-  - Edit
-  - Bash(npm:*)
-  - Bash(yarn:*)
-  - Bash(pnpm:*)
-  - Bash(bun:*)
-  - Bash(pytest:*)
-  - Bash(cargo:*)
-  - Bash(go:*)
-  - Bash(make:*)
-  - Bash(git:*)
-  - AskUserQuestion
-  - mcp__plugin_engram-mcp_engram__*
 hooks:
   Stop:
     - hooks:
@@ -218,17 +202,6 @@ Add to `progress.md`:
 ```bash
 git add .artifacts/{slug}/
 git commit -m "docs({slug}): record successful testing"
-```
-
-### Step 10: Output Completion
-
-```
-TESTING COMPLETE
-Automated: {pass/fail/na}
-Manual: {N} scenarios passed
-Issues fixed: {N}
-User confirmed: YES
-
 ```
 
 ## Critical Rules

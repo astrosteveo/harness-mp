@@ -97,39 +97,22 @@ Skill
   args: "--slug dark-mode-toggle --description \"add dark mode toggle\""
 ```
 
-### Step 5: Handle Skill Output
+### Step 5: Continue Through Phases
 
-After each skill completes, examine its output.
+After each skill completes, invoke the next phase:
 
-**Skill outputs follow this pattern:**
-```
-{PHASE} COMPLETE
-Slug: {slug}
-...
-```
+| Current Phase | Next Skill |
+|---------------|------------|
+| Discovery | `harness:workflow-explore` |
+| Explore | `harness:workflow-requirements` |
+| Requirements | `harness:workflow-design` |
+| Design | `harness:workflow-implement` |
+| Implement | `harness:workflow-review` |
+| Review | `harness:workflow-testing` |
+| Testing | `harness:workflow-summary` |
+| Summary | Workflow finished |
 
-When you see `{PHASE} COMPLETE`:
-1. Note the slug from output
-2. Determine next phase in sequence
-3. Check if next phase should be skipped (`--skip`)
-4. Invoke next phase skill with the slug
-
-### Step 6: Continue Through Phases
-
-Automatically invoke the next skill after each completion:
-
-| After | Invoke Next |
-|-------|-------------|
-| `DISCOVERY COMPLETE` | `harness:workflow-explore` |
-| `EXPLORE COMPLETE` | `harness:workflow-requirements` |
-| `REQUIREMENTS COMPLETE` | `harness:workflow-design` |
-| `DESIGN COMPLETE` | `harness:workflow-implement` |
-| `IMPLEMENT COMPLETE` | `harness:workflow-review` |
-| `REVIEW COMPLETE` | `harness:workflow-testing` |
-| `TESTING COMPLETE` | `harness:workflow-summary` |
-| `SUMMARY COMPLETE` | Workflow finished |
-
-### Step 7: Handle Blocked States
+### Step 6: Handle Blocked States
 
 If a skill outputs `BLOCKED` or an error:
 1. Present the issue to user
@@ -172,43 +155,4 @@ Pass `--slug` to subsequent phases after discovery creates it.
 | `/harness:feature --tdd` | Enable TDD mode |
 | `/harness:feature --skip explore` | Skip explore phase |
 
-## Example Execution
 
-```
-User: /harness:feature "add dark mode toggle"
-
-Orchestrator: Parse arguments → feature_description = "add dark mode toggle"
-Orchestrator: Check engram → No prior work found
-Orchestrator: Check artifacts → No existing artifacts
-Orchestrator: Starting from discovery phase
-
-Orchestrator: Invoking skill...
-  Skill(skill: "harness:workflow-discovery", args: "--description \"add dark mode toggle\"")
-
-[Discovery skill runs, creates artifacts]
-
-Skill output:
-  DISCOVERY COMPLETE
-  Slug: dark-mode-toggle
-  Path: .artifacts/dark-mode-toggle/
-
-Orchestrator: Discovery complete. Invoking explore phase...
-  Skill(skill: "harness:workflow-explore", args: "--slug dark-mode-toggle --description \"add dark mode toggle\"")
-
-[Explore skill runs]
-
-Skill output:
-  EXPLORE COMPLETE
-  Slug: dark-mode-toggle
-
-Orchestrator: Explore complete. Invoking requirements phase...
-  Skill(skill: "harness:workflow-requirements", args: "--slug dark-mode-toggle --description \"add dark mode toggle\"")
-
-[... continues through all phases ...]
-
-Skill output:
-  SUMMARY COMPLETE
-  Slug: dark-mode-toggle
-
-Orchestrator: Feature development complete!
-```

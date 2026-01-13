@@ -2,15 +2,6 @@
 name: harness:workflow-summary
 description: This skill should be used when the user asks to "summarize the feature", "complete the feature", "wrap up", or when the harness:feature orchestrator invokes the Summary phase.
 context: fork
-agent: general-purpose
-allowed-tools:
-  - Read
-  - Write
-  - Edit
-  - Bash(git:*)
-  - Bash(gh:*)
-  - AskUserQuestion
-  - mcp__plugin_engram-mcp_engram__*
 hooks:
   Stop:
     - hooks:
@@ -263,17 +254,6 @@ Generated via /harness:feature"
 ```
 
 **Skip:** Continue to completion
-
-### Step 9: Output Completion
-
-```
-SUMMARY COMPLETE
-Artifacts: 5 files
-Commits: {N}
-Memory: persisted
-Push/PR: {status}
-
-```
 
 ## Critical Rules
 

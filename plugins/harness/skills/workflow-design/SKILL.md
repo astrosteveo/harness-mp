@@ -2,18 +2,6 @@
 name: harness:workflow-design
 description: This skill should be used when the user asks to "design architecture", "evaluate approaches", "plan feature implementation", or when the harness:feature orchestrator invokes the Design phase.
 context: fork
-agent: Plan
-allowed-tools:
-  - Task
-  - Read
-  - Write
-  - Edit
-  - Glob
-  - Grep
-  - WebSearch
-  - WebFetch
-  - AskUserQuestion
-  - mcp__plugin_engram-mcp_engram__*
 hooks:
   Stop:
     - hooks:
@@ -254,16 +242,6 @@ mcp__plugin_engram-mcp_engram__memory_decision
 ```bash
 git add .artifacts/{slug}/
 git commit -m "docs({slug}): select {approach} architecture"
-```
-
-### Step 10: Output Completion
-
-```
-DESIGN COMPLETE
-Approach: {selected}
-Key components: {list}
-Integration points: {list}
-
 ```
 
 ## Critical Rules

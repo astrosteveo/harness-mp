@@ -2,15 +2,6 @@
 name: harness:workflow-explore
 description: This skill should be used when the user asks to "explore the codebase", "understand the architecture", "find patterns for a feature", or when the harness:feature orchestrator invokes the Explore phase.
 context: fork
-agent: Explore
-allowed-tools:
-  - Task
-  - Read
-  - Glob
-  - Grep
-  - Bash(ls:*)
-  - Bash(find:*)
-  - mcp__plugin_engram-mcp_engram__*
 hooks:
   Stop:
     - hooks:
@@ -150,16 +141,6 @@ mcp__plugin_engram-mcp_engram__memory_lesson
 ```bash
 git add .artifacts/{slug}/
 git commit -m "docs({slug}): document codebase exploration"
-```
-
-### Step 8: Output Completion
-
-```
-EXPLORE COMPLETE
-Key patterns: {list}
-Integration points: {list}
-Files identified: {count}
-
 ```
 
 ## Critical Rules

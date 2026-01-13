@@ -2,15 +2,6 @@
 name: harness:workflow-discovery
 description: This skill should be used when the user asks to "start a new feature", "initialize feature tracking", "begin feature development", or when the harness:feature orchestrator invokes the Discovery phase.
 context: fork
-agent: general-purpose
-allowed-tools:
-  - Read
-  - Write
-  - Bash(mkdir:*)
-  - Bash(ls:*)
-  - Bash(git:*)
-  - AskUserQuestion
-  - mcp__plugin_engram-mcp_engram__*
 hooks:
   Stop:
     - hooks:
@@ -143,18 +134,6 @@ mcp__plugin_engram-mcp_engram__memory_remember
 ```bash
 git add .artifacts/{slug}/
 git commit -m "docs({slug}): initialize feature tracking"
-```
-
-### Step 8: Output Completion
-
-Output this exact format for orchestrator handoff:
-
-```
-DISCOVERY COMPLETE
-Slug: {slug}
-Path: .artifacts/{slug}/
-Description: {description}
-
 ```
 
 ## Critical Rules

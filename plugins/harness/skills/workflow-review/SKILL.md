@@ -2,16 +2,6 @@
 name: harness:workflow-review
 description: This skill should be used when the user asks to "review the code", "check for issues", "code review", or when the harness:feature orchestrator invokes the Review phase.
 context: fork
-agent: general-purpose
-allowed-tools:
-  - Task
-  - Read
-  - Edit
-  - Glob
-  - Grep
-  - Bash(git:*)
-  - AskUserQuestion
-  - mcp__plugin_engram-mcp_engram__*
 hooks:
   Stop:
     - hooks:
@@ -204,17 +194,6 @@ mcp__plugin_engram-mcp_engram__memory_lesson
 ```bash
 git add .artifacts/{slug}/
 git commit -m "docs({slug}): complete code review"
-```
-
-### Step 10: Output Completion
-
-```
-REVIEW COMPLETE
-Issues found: {N}
-Fixed: {N}
-Deferred: {N}
-High priority remaining: {N}
-
 ```
 
 ## Critical Rules

@@ -2,27 +2,6 @@
 name: harness:workflow-implement
 description: This skill should be used when the user asks to "implement the feature", "write the code", "build it", or when the harness:feature orchestrator invokes the Implement phase.
 context: fork
-agent: general-purpose
-allowed-tools:
-  - Task
-  - Read
-  - Write
-  - Edit
-  - Glob
-  - Grep
-  - Bash(git:*)
-  - Bash(npm:*)
-  - Bash(yarn:*)
-  - Bash(pnpm:*)
-  - Bash(bun:*)
-  - Bash(cargo:*)
-  - Bash(go:*)
-  - Bash(python:*)
-  - Bash(pytest:*)
-  - Bash(make:*)
-  - Bash(ls:*)
-  - AskUserQuestion
-  - mcp__plugin_engram-mcp_engram__*
 hooks:
   PreToolUse:
     - matcher: "Write|Edit"
@@ -227,17 +206,6 @@ Add to `progress.md`:
 | Issue | Resolution |
 |-------|------------|
 | {issue} | {how fixed} |
-```
-
-### Step 8: Output Completion
-
-```
-IMPLEMENT COMPLETE
-Files changed: {count}
-Files created: {count}
-Commits: {count}
-TDD: {yes/no}
-
 ```
 
 ## Critical Rules
