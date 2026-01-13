@@ -1,9 +1,6 @@
 # Engram data (created at runtime)
 .engram/
 
-# Development artifacts
-.artifacts/
-
 # IDE
 .idea/
 .vscode/
