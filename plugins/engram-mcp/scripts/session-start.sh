@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 # Session start - inject previous session context
-# Uses local engram install for speed
+# Uses uvx for portable execution (no pre-install required)
+#
+# For faster startup, users can install persistently:
+#   uv tool install git+https://github.com/astrosteveo/engram
 
-cat | uv run --directory ~/workspace/engram engram-session-start
+cat | uvx --from git+https://github.com/astrosteveo/engram engram-session-start

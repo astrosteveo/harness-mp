@@ -35,6 +35,14 @@ uvx --from git+https://github.com/astrosteveo/engram engram-mcp
 
 No local installation of engram is required.
 
+### Optional: Faster Startup
+
+For frequent use, install engram persistently to skip uvx resolution:
+
+```bash
+uv tool install git+https://github.com/astrosteveo/engram
+```
+
 ## Uninstall
 
 ```bash
