@@ -77,7 +77,16 @@ digraph process {
     "Code quality reviewer subagent approves?" -> "Mark task complete in TodoWrite" [label="yes"];
     "Mark task complete in TodoWrite" -> "More tasks remain?";
     "More tasks remain?" -> "Dispatch implementer subagent (./implementer-prompt.md)" [label="yes"];
-    "More tasks remain?" -> "Dispatch final code reviewer subagent for entire implementation" [label="no"];
+    "More tasks remain?" -> "Present Manual Test Checklist to user" [label="no"];
+    "Present Manual Test Checklist to user" [shape=box];
+    "User confirms manual tests pass?" [shape=diamond];
+    "User reports issues" [shape=box];
+    "Dispatch fix subagent" [shape=box];
+    "Present Manual Test Checklist to user" -> "User confirms manual tests pass?";
+    "User confirms manual tests pass?" -> "Dispatch final code reviewer subagent for entire implementation" [label="yes"];
+    "User confirms manual tests pass?" -> "User reports issues" [label="no"];
+    "User reports issues" -> "Dispatch fix subagent";
+    "Dispatch fix subagent" -> "Present Manual Test Checklist to user";
     "Dispatch final code reviewer subagent for entire implementation" -> "Use harness:finishing-a-development-branch";
 }
 ```
@@ -87,6 +96,29 @@ digraph process {
 - `./implementer-prompt.md` - Dispatch implementer subagent
 - `./spec-reviewer-prompt.md` - Dispatch spec compliance reviewer subagent
 - `./code-quality-reviewer-prompt.md` - Dispatch code quality reviewer subagent
+
+## Manual Test Checkpoint
+
+After all tasks complete, before final code review:
+
+1. **Extract checklist from plan** - Find the "## Manual Test Checklist" section
+2. **Present to user:**
+
+```
+All tasks implemented and reviewed. Before final review, please verify manually:
+
+### [Component]
+- [ ] [Action] → [Expected result]
+...
+
+Let me know when complete, or report any issues found.
+```
+
+3. **Wait for user response**
+4. **If issues reported:** Dispatch fix subagent with specific instructions
+5. **If confirmed:** Proceed to final code reviewer
+
+**Never skip this checkpoint** - user verification catches issues automated tests miss.
 
 ## Example Workflow
 
@@ -158,6 +190,18 @@ Code reviewer: ✅ Approved
 ...
 
 [After all tasks]
+[Present Manual Test Checklist from plan]
+
+"All tasks implemented. Please verify manually:
+
+### Authentication
+- [ ] Login with valid credentials → Redirects to /dashboard
+- [ ] Click Logout → Returns to /login
+
+Let me know when complete, or report issues."
+
+User: "All good, verified both items."
+
 [Dispatch final code-reviewer]
 Final reviewer: All requirements met, ready to merge
 
