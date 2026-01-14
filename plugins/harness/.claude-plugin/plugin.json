@@ -1,0 +1,13 @@
+{
+  "name": "harness",
+  "description": "Core skills library for Claude Code: TDD, debugging, collaboration patterns, and proven techniques",
+  "version": "9.9.9-dev",
+  "author": {
+    "name": "Steven Mosley",
+    "email": "stevengmjr@gmail.com"
+  },
+  "homepage": "https://github.com/astrosteveo/harness",
+  "repository": "https://github.com/astrosteveo/harness",
+  "license": "MIT",
+  "keywords": ["skills", "tdd", "debugging", "collaboration", "best-practices", "workflows"]
+}
