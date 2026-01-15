@@ -9,7 +9,7 @@ description: Use when implementation is complete, all tests pass, and you need t
 
 Guide completion of development work by presenting clear options and handling chosen workflow.
 
-**Core principle:** Verify clean state → Verify tests → Present options → Execute choice → Clean up.
+**Core principle:** Verify clean state → Verify tests → Confirm manual checks → Present options → Execute choice → Clean up.
 
 **Announce at start:** "I'm using the finishing-a-development-branch skill to complete this work."
 
@@ -91,7 +91,23 @@ Stop. Don't proceed to Step 3.
 
 **If tests pass:** Continue to Step 3.
 
-### Step 3: Determine Base Branch
+### Step 3: Confirm Manual Verification
+
+**Ask user to confirm:**
+
+```
+Before finishing, please confirm:
+- Have you had a chance to perform any manual checks?
+- Are you satisfied with the implementation?
+
+Ready to proceed? (yes/no)
+```
+
+**If no:** Ask what needs to be addressed before finishing.
+
+**If yes:** Continue to Step 4.
+
+### Step 4: Determine Base Branch
 
 ```bash
 # Try common base branches
@@ -100,7 +116,7 @@ git merge-base HEAD main 2>/dev/null || git merge-base HEAD master 2>/dev/null
 
 Or ask: "This branch split from main - is that correct?"
 
-### Step 4: Present Options
+### Step 5: Present Options
 
 Present exactly these 4 options:
 
@@ -117,7 +133,7 @@ Which option?
 
 **Don't add explanation** - keep options concise.
 
-### Step 5: Execute Choice
+### Step 6: Execute Choice
 
 #### Option 1: Merge Locally
 
@@ -138,7 +154,7 @@ git merge <feature-branch>
 git branch -d <feature-branch>
 ```
 
-Then: Cleanup worktree (Step 6)
+Then: Cleanup worktree (Step 7)
 
 #### Option 2: Push and Create PR
 
@@ -157,7 +173,7 @@ EOF
 )"
 ```
 
-Then: Cleanup worktree (Step 6)
+Then: Cleanup worktree (Step 7)
 
 #### Option 3: Keep As-Is
 
@@ -185,9 +201,9 @@ git checkout <base-branch>
 git branch -D <feature-branch>
 ```
 
-Then: Cleanup worktree (Step 6)
+Then: Cleanup worktree (Step 7)
 
-### Step 6: Cleanup Worktree
+### Step 7: Cleanup Worktree
 
 **For Options 1, 2, 4:**
 
@@ -246,6 +262,7 @@ git worktree remove <worktree-path>
 **Always:**
 - Verify clean state (no uncommitted changes, commits pushed) first
 - Verify tests before offering options
+- Confirm user is satisfied with implementation before finishing
 - Present exactly 4 options
 - Get typed confirmation for Option 4
 - Clean up worktree for Options 1 & 4 only
