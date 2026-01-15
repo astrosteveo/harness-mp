@@ -9,13 +9,67 @@ description: Use when implementation is complete, all tests pass, and you need t
 
 Guide completion of development work by presenting clear options and handling chosen workflow.
 
-**Core principle:** Verify tests → Present options → Execute choice → Clean up.
+**Core principle:** Verify clean state → Verify tests → Present options → Execute choice → Clean up.
 
 **Announce at start:** "I'm using the finishing-a-development-branch skill to complete this work."
 
 ## The Process
 
-### Step 1: Verify Tests
+### Step 1: Verify Clean State
+
+**Check for uncommitted changes:**
+
+```bash
+git status --porcelain
+```
+
+**If uncommitted changes exist:**
+```
+Found uncommitted changes:
+[list files]
+
+Options:
+1. Commit these changes now
+2. Stash for later
+3. Discard changes
+
+Which option?
+```
+
+Handle choice before proceeding.
+
+**Check for untracked files:**
+
+Same command shows untracked files. Ask user:
+```
+Found untracked files:
+[list files]
+
+Options:
+1. Add and commit these files
+2. Add to .gitignore
+3. Leave untracked (will not be included)
+
+Which option?
+```
+
+**Check for unpushed commits:**
+
+```bash
+git log origin/$(git branch --show-current)..HEAD --oneline 2>/dev/null
+```
+
+If commits exist and branch has remote, push before proceeding:
+```bash
+git push
+```
+
+**Only proceed to Step 2 when:**
+- No uncommitted changes
+- Untracked files handled (committed, ignored, or acknowledged)
+- All commits pushed
+
+### Step 2: Verify Tests
 
 **Before presenting options, verify tests pass:**
 
@@ -33,11 +87,11 @@ Tests failing (<N> failures). Must fix before completing:
 Cannot proceed with merge/PR until tests pass.
 ```
 
-Stop. Don't proceed to Step 2.
+Stop. Don't proceed to Step 3.
 
-**If tests pass:** Continue to Step 2.
+**If tests pass:** Continue to Step 3.
 
-### Step 2: Determine Base Branch
+### Step 3: Determine Base Branch
 
 ```bash
 # Try common base branches
@@ -46,7 +100,7 @@ git merge-base HEAD main 2>/dev/null || git merge-base HEAD master 2>/dev/null
 
 Or ask: "This branch split from main - is that correct?"
 
-### Step 3: Present Options
+### Step 4: Present Options
 
 Present exactly these 4 options:
 
@@ -63,7 +117,7 @@ Which option?
 
 **Don't add explanation** - keep options concise.
 
-### Step 4: Execute Choice
+### Step 5: Execute Choice
 
 #### Option 1: Merge Locally
 
@@ -84,7 +138,7 @@ git merge <feature-branch>
 git branch -d <feature-branch>
 ```
 
-Then: Cleanup worktree (Step 5)
+Then: Cleanup worktree (Step 6)
 
 #### Option 2: Push and Create PR
 
@@ -103,7 +157,7 @@ EOF
 )"
 ```
 
-Then: Cleanup worktree (Step 5)
+Then: Cleanup worktree (Step 6)
 
 #### Option 3: Keep As-Is
 
@@ -131,9 +185,9 @@ git checkout <base-branch>
 git branch -D <feature-branch>
 ```
 
-Then: Cleanup worktree (Step 5)
+Then: Cleanup worktree (Step 6)
 
-### Step 5: Cleanup Worktree
+### Step 6: Cleanup Worktree
 
 **For Options 1, 2, 4:**
 
@@ -160,6 +214,10 @@ git worktree remove <worktree-path>
 
 ## Common Mistakes
 
+**Skipping clean state verification**
+- **Problem:** Uncommitted changes lost, unpushed commits forgotten
+- **Fix:** Always check git status and push before finishing
+
 **Skipping test verification**
 - **Problem:** Merge broken code, create failing PR
 - **Fix:** Always verify tests before offering options
@@ -179,12 +237,14 @@ git worktree remove <worktree-path>
 ## Red Flags
 
 **Never:**
+- Proceed with uncommitted changes or unpushed commits
 - Proceed with failing tests
 - Merge without verifying tests on result
 - Delete work without confirmation
 - Force-push without explicit request
 
 **Always:**
+- Verify clean state (no uncommitted changes, commits pushed) first
 - Verify tests before offering options
 - Present exactly 4 options
 - Get typed confirmation for Option 4
