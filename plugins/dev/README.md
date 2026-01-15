@@ -1,110 +1,137 @@
-# Harness
+# Superpowers
 
-Feature development workflows and plugin creation skills for Claude Code.
+Superpowers is a complete software development workflow for your coding agents, built on top of a set of composable "skills" and some initial instructions that make sure your agent uses them.
 
-Harness bootstraps your project with skills and agents that live in `.claude/`, checked into version control, and evolve with your project.
+## How it works
+
+It starts from the moment you fire up your coding agent. As soon as it sees that you're building something, it *doesn't* just jump into trying to write code. Instead, it steps back and asks you what you're really trying to do. 
+
+Once it's teased a spec out of the conversation, it shows it to you in chunks short enough to actually read and digest. 
+
+After you've signed off on the design, your agent puts together an implementation plan that's clear enough for an enthusiastic junior engineer with poor taste, no judgement, no project context, and an aversion to testing to follow. It emphasizes true red/green TDD, YAGNI (You Aren't Gonna Need It), and DRY. 
+
+Next up, once you say "go", it launches a *subagent-driven-development* process, having agents work through each engineering task, inspecting and reviewing their work, and continuing forward. It's not uncommon for Claude to be able to work autonomously for a couple hours at a time without deviating from the plan you put together.
+
+There's a bunch more to it, but that's the core of the system. And because the skills trigger automatically, you don't need to do anything special. Your coding agent just has Superpowers.
+
+
+## Sponsorship
+
+If Superpowers has helped you do stuff that makes money and you are so inclined, I'd greatly appreciate it if you'd consider [sponsoring my opensource work](https://github.com/sponsors/obra).
+
+Thanks! 
+
+- Jesse
+
 
 ## Installation
 
-### Via Claude Command (recommended)
+### Claude Code (via Plugin Marketplace)
 
-If harness is installed as a plugin:
-
-```
-/harness:init            # First install - skip existing
-/harness:init --update   # Smart update - preserve customizations
-/harness:init --force    # Overwrite everything
-```
-
-### Via Script
-
-Run the init script directly:
+In Claude Code, register the marketplace first:
 
 ```bash
-/path/to/harness/scripts/init.sh                    # First install
-/path/to/harness/scripts/init.sh --update           # Smart update
-/path/to/harness/scripts/init.sh --force            # Overwrite all
-/path/to/harness/scripts/init.sh /path/to/project   # Specify target
+/plugin marketplace add obra/superpowers-marketplace
 ```
 
-### How `--update` Works
+Then install the plugin from this marketplace:
 
-- Tracks installed file checksums in `.claude/.harness-manifest`
-- Files you haven't modified -> updated to latest
-- Files you've customized -> preserved (listed in output)
-
-## What Gets Installed
-
-Skills and agents are copied to your project's `.claude/` directory:
-
-```
-your-project/
-└── .claude/
-    ├── skills/           # 21 development skills
-    ├── agents/           # 6 specialized agents
-    └── .harness-manifest # Tracks installed versions
+```bash
+/plugin install superpowers@superpowers-marketplace
 ```
 
-## Feature Development Workflow
+### Verify Installation
 
-Guided workflow for building features from discovery to completion:
+Check that commands appear:
 
-| Skill | Purpose |
-|-------|---------|
-| `/harness:orchestrator` | Full guided workflow from start to finish |
-| `/harness:feature-discovery` | Initialize a new feature, create artifacts directory |
-| `/harness:explore-codebase` | Deep exploration to understand patterns and architecture |
-| `/harness:gather-requirements` | Systematically identify and resolve ambiguities |
-| `/harness:design-architecture` | Design multiple approaches with trade-offs |
-| `/harness:implement-feature` | Build following the designed architecture |
-| `/harness:review-code` | Review for bugs, quality, conventions |
-| `/harness:verify-testing` | Generate testing checklist, guide verification |
-| `/harness:summarize-feature` | Document what was built, decisions, lessons |
-| `/harness:red-green-refactor` | TDD workflow for testable functionality |
-
-## Plugin Development
-
-Create project-specific skills, agents, hooks, and commands:
-
-| Skill | Purpose |
-|-------|---------|
-| `/harness:skill-development` | Create new skills with proper structure |
-| `/harness:agent-development` | Create autonomous agents with system prompts |
-| `/harness:command-development` | Create slash commands with arguments |
-| `/harness:hook-development` | Create event hooks (PreToolUse, PostToolUse, etc.) |
-| `/harness:plugin-structure` | Scaffold complete plugin directory layout |
-| `/harness:mcp-integration` | Add MCP servers to plugins |
-| `/harness:lsp-integration` | Add language server support |
-| `/harness:plugin-settings` | Add configurable settings to plugins |
-
-## The Workflow
-
-```
-/harness:orchestrator
-    │
-    ├── feature-discovery     # What are we building?
-    ├── explore-codebase      # How does existing code work?
-    ├── gather-requirements   # What exactly do we need?
-    ├── design-architecture   # How should we build it?
-    ├── implement-feature     # Build it
-    ├── review-code           # Check quality
-    ├── verify-testing        # Manual testing
-    └── summarize-feature     # Document it
+```bash
+/help
 ```
 
-Each step creates artifacts in `.artifacts/<feature-name>/` for tracking progress.
+```
+# Should see:
+# /superpowers:brainstorm - Interactive design refinement
+# /superpowers:write-plan - Create implementation plan
+# /superpowers:execute-plan - Execute plan in batches
+```
 
-## Why Template-Based?
+## The Basic Workflow
 
-Unlike traditional plugins, harness bootstraps files into your project because:
+1. **brainstorming** - Activates before writing code. Refines rough ideas through questions, explores alternatives, presents design in sections for validation. Saves design document.
 
-1. **Version Control**: Skills evolve with your project through git
-2. **Team Sharing**: Everyone gets the same workflows when they clone
-3. **Customization**: Modify skills for your specific project needs
-4. **Code Review**: Changes to workflows go through your normal review process
+2. **using-git-worktrees** - Activates after design approval. Creates isolated workspace on new branch, runs project setup, verifies clean test baseline.
 
-Use `--update` to pull in upstream improvements while preserving your customizations.
+3. **writing-plans** - Activates with approved design. Breaks work into bite-sized tasks (2-5 minutes each). Every task has exact file paths, complete code, verification steps.
+
+4. **subagent-driven-development** or **executing-plans** - Activates with plan. Dispatches fresh subagent per task with two-stage review (spec compliance, then code quality), or executes in batches with human checkpoints.
+
+5. **test-driven-development** - Activates during implementation. Enforces RED-GREEN-REFACTOR: write failing test, watch it fail, write minimal code, watch it pass, commit. Deletes code written before tests.
+
+6. **requesting-code-review** - Activates between tasks. Reviews against plan, reports issues by severity. Critical issues block progress.
+
+7. **finishing-a-development-branch** - Activates when tasks complete. Verifies tests, presents options (merge/PR/keep/discard), cleans up worktree.
+
+**The agent checks for relevant skills before any task.** Mandatory workflows, not suggestions.
+
+## What's Inside
+
+### Skills Library
+
+**Testing**
+- **test-driven-development** - RED-GREEN-REFACTOR cycle (includes testing anti-patterns reference)
+
+**Debugging**
+- **systematic-debugging** - 4-phase root cause process (includes root-cause-tracing, defense-in-depth, condition-based-waiting techniques)
+- **verification-before-completion** - Ensure it's actually fixed
+
+**Collaboration** 
+- **brainstorming** - Socratic design refinement
+- **writing-plans** - Detailed implementation plans
+- **executing-plans** - Batch execution with checkpoints
+- **dispatching-parallel-agents** - Concurrent subagent workflows
+- **requesting-code-review** - Pre-review checklist
+- **receiving-code-review** - Responding to feedback
+- **using-git-worktrees** - Parallel development branches
+- **finishing-a-development-branch** - Merge/PR decision workflow
+- **subagent-driven-development** - Fast iteration with two-stage review (spec compliance, then code quality)
+
+**Meta**
+- **writing-skills** - Create new skills following best practices (includes testing methodology)
+- **using-superpowers** - Introduction to the skills system
+
+## Philosophy
+
+- **Test-Driven Development** - Write tests first, always
+- **Systematic over ad-hoc** - Process over guessing
+- **Complexity reduction** - Simplicity as primary goal
+- **Evidence over claims** - Verify before declaring success
+
+Read more: [Superpowers for Claude Code](https://blog.fsck.com/2025/10/09/superpowers/)
+
+## Contributing
+
+Skills live directly in this repository. To contribute:
+
+1. Fork the repository
+2. Create a branch for your skill
+3. Follow the `writing-skills` skill for creating and testing new skills
+4. Submit a PR
+
+See `skills/writing-skills/SKILL.md` for the complete guide.
+
+## Updating
+
+Skills update automatically when you update the plugin:
+
+```bash
+/plugin update superpowers
+```
 
 ## License
 
-MIT
+MIT License - see LICENSE file for details
+
+## Support
+
+- **Issues**: https://github.com/obra/superpowers/issues
+- **Marketplace**: https://github.com/obra/superpowers-marketplace
