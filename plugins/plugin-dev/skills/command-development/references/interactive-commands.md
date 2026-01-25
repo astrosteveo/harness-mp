@@ -634,9 +634,9 @@ allowed-tools: AskUserQuestion, Bash, Read
 ## Detect Current State
 
 Check existing configuration:
-- Current language: !‌`detect-language.sh`
-- Existing frameworks: !‌`detect-frameworks.sh`
-- Available tools: !‌`check-tools.sh`
+- Current language: BANG`detect-language.sh`
+- Existing frameworks: BANG`detect-frameworks.sh`
+- Available tools: BANG`check-tools.sh`
 
 ## Ask Context-Appropriate Questions
 

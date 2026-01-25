@@ -1,5 +1,5 @@
 ---
-name: Command Development
+name: command-development
 description: This skill should be used when the user asks to "create a slash command", "add a command", "write a custom command", "define command arguments", "use command frontmatter", "organize commands", "create command with file references", "interactive command", "use AskUserQuestion in command", or needs guidance on slash command structure, YAML frontmatter fields, dynamic arguments, bash execution in commands, user interaction patterns, or command development best practices for Claude Code.
 ---
 
@@ -15,6 +15,8 @@ Slash commands are frequently-used prompts defined as Markdown files that Claude
 - Dynamic arguments and file references
 - Bash execution for context
 - Command organization and namespacing
+
+> **Note:** In examples throughout this documentation, `BANG` represents the exclamation mark character for bash execution syntax. When writing actual commands, replace `BANG` with an exclamation mark (e.g., `BANG\`git status\`` becomes exclamation-backtick-git status-backtick).
 
 ## Command Basics
 
@@ -440,7 +442,7 @@ description: Review code changes
 allowed-tools: Read, Bash(git:*)
 ---
 
-Files changed: !‌`git diff --name-only`
+Files changed: BANG`git diff --name-only`
 
 Review each file for:
 1. Code quality and style
@@ -460,7 +462,7 @@ argument-hint: [test-file]
 allowed-tools: Bash(npm:*)
 ---
 
-Run tests: !‌`npm test $1`
+Run tests: BANG`npm test $1`
 
 Analyze results and suggest fixes for failures.
 ```
@@ -492,7 +494,7 @@ allowed-tools: Bash(gh:*), Read
 
 PR #$1 Workflow:
 
-1. Fetch PR: !‌`gh pr view $1`
+1. Fetch PR: BANG`gh pr view $1`
 2. Review changes
 3. Run checks
 4. Approve or request changes
@@ -543,7 +545,7 @@ description: Analyze using plugin script
 allowed-tools: Bash(node:*)
 ---
 
-Run analysis: !‌`node ${CLAUDE_PLUGIN_ROOT}/scripts/analyze.js $1`
+Run analysis: BANG`node ${CLAUDE_PLUGIN_ROOT}/scripts/analyze.js $1`
 
 Review results and report findings.
 ```
@@ -552,7 +554,7 @@ Review results and report findings.
 
 ```markdown
 # Execute plugin script
-!‌`bash ${CLAUDE_PLUGIN_ROOT}/scripts/script.sh`
+BANG`bash ${CLAUDE_PLUGIN_ROOT}/scripts/script.sh`
 
 # Load plugin configuration
 @${CLAUDE_PLUGIN_ROOT}/config/settings.json
@@ -634,9 +636,9 @@ description: Complete build workflow
 allowed-tools: Bash(*)
 ---
 
-Build: !‌`bash ${CLAUDE_PLUGIN_ROOT}/scripts/build.sh`
-Test: !‌`bash ${CLAUDE_PLUGIN_ROOT}/scripts/test.sh`
-Package: !‌`bash ${CLAUDE_PLUGIN_ROOT}/scripts/package.sh`
+Build: BANG`bash ${CLAUDE_PLUGIN_ROOT}/scripts/build.sh`
+Test: BANG`bash ${CLAUDE_PLUGIN_ROOT}/scripts/test.sh`
+Package: BANG`bash ${CLAUDE_PLUGIN_ROOT}/scripts/package.sh`
 
 Review outputs and report workflow status.
 ```
@@ -727,7 +729,7 @@ allowed-tools: Bash(node:*), Read
 Target: @$1
 
 Phase 1 - Static Analysis:
-!‌`node ${CLAUDE_PLUGIN_ROOT}/scripts/lint.js $1`
+BANG`node ${CLAUDE_PLUGIN_ROOT}/scripts/lint.js $1`
 
 Phase 2 - Deep Review:
 Launch code-reviewer agent for detailed analysis.
@@ -759,7 +761,7 @@ description: Deploy with validation
 argument-hint: [environment]
 ---
 
-Validate environment: !‌`echo "$1" | grep -E "^(dev|staging|prod)$" || echo "INVALID"`
+Validate environment: BANG`echo "$1" | grep -E "^(dev|staging|prod)$" || echo "INVALID"`
 
 If $1 is valid environment:
   Deploy to $1
@@ -776,7 +778,7 @@ description: Process configuration
 argument-hint: [config-file]
 ---
 
-Check file exists: !‌`test -f $1 && echo "EXISTS" || echo "MISSING"`
+Check file exists: BANG`test -f $1 && echo "EXISTS" || echo "MISSING"`
 
 If file exists:
   Process configuration: @$1
@@ -795,8 +797,8 @@ allowed-tools: Bash(test:*)
 ---
 
 Validate plugin setup:
-- Script: !‌`test -x ${CLAUDE_PLUGIN_ROOT}/bin/analyze && echo "✓" || echo "✗"`
-- Config: !‌`test -f ${CLAUDE_PLUGIN_ROOT}/config.json && echo "✓" || echo "✗"`
+- Script: BANG`test -x ${CLAUDE_PLUGIN_ROOT}/bin/analyze && echo "✓" || echo "✗"`
+- Config: BANG`test -f ${CLAUDE_PLUGIN_ROOT}/config.json && echo "✓" || echo "✗"`
 
 If all checks pass, run analysis.
 Otherwise, report missing components.
@@ -810,7 +812,7 @@ description: Build with error handling
 allowed-tools: Bash(*)
 ---
 
-Execute build: !‌`bash ${CLAUDE_PLUGIN_ROOT}/scripts/build.sh 2>&1 || echo "BUILD_FAILED"`
+Execute build: BANG`bash ${CLAUDE_PLUGIN_ROOT}/scripts/build.sh 2>&1 || echo "BUILD_FAILED"`
 
 If build succeeded:
   Report success and output location
