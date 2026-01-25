@@ -98,11 +98,13 @@ git commit -m "feat: add specific feature"
 
 After saving the plan, offer execution choice:
 
-**"Plan complete and saved to `docs/plans/<filename>.md`. Two execution options:**
+**"Plan complete and saved to `docs/plans/<filename>.md`. Three execution options:**
 
 **1. Subagent-Driven (this session)** - I dispatch fresh subagent per task, review between tasks, fast iteration
 
-**2. Parallel Session (separate)** - Open new session with executing-plans, batch execution with checkpoints
+**2. Fresh Session (this terminal)** - Clear context and execute with full focus on implementation
+
+**3. Parallel Session (separate)** - Open new session with executing-plans, batch execution with checkpoints
 
 **Which approach?"**
 
@@ -110,6 +112,12 @@ After saving the plan, offer execution choice:
 - **REQUIRED SUB-SKILL:** Use superpowers:subagent-driven-development
 - Stay in this session
 - Fresh subagent per task + code review
+
+**If Fresh Session chosen:**
+- Instruct user to do two steps:
+  1. Type `/clear`
+  2. Then type `/superpowers:execute-plan docs/plans/<actual-filename>.md`
+- Benefits: Clean context, no accumulated conversation overhead, full focus on execution
 
 **If Parallel Session chosen:**
 - Guide them to open new session in worktree
